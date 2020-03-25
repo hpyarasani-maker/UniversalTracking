@@ -29,11 +29,11 @@ namespace UniversalTracking
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //YahooJapan WOWS = new YahooJapan();
         //YahooHK WOWS = new YahooHK();
-        HaoSou360 WOWS = new HaoSou360();
+        //HaoSou360 WOWS = new HaoSou360();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //Sogou WOWS = new Sogou();
         //Naver WOWS = new Naver();
-        //PriceSearcher WOWS = new PriceSearcher();
+        PriceSearcher WOWS = new PriceSearcher();
 
         //int count; 
 
@@ -41,7 +41,7 @@ namespace UniversalTracking
         {
             InitializeComponent();
             //count = 0;   // Common.GetOxylabsCount();          
-            timerExit();
+            //timerExit();
         }
         void timerExit()
         {
@@ -57,7 +57,8 @@ namespace UniversalTracking
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "YahooHK_256_6_WC_70_Universal";//changes
+            //this.Text = "YahooHK_256_6_WC_70_Universal";//changes
+            this.Text = "PriceSearcher_GT50_3";
             Thread t = new Thread(new ThreadStart (StartProcess));
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
@@ -70,8 +71,10 @@ namespace UniversalTracking
             Task<ArrayList> ta = null;
             while (true)
             {
-                string myDate = DateTime.Today.ToString("yyyy-MM-dd");             
-                string kwQry = "[GetKeywords_48_D] '" + myDate + "'";//changes                
+                string myDate = DateTime.Today.ToString("yyyy-MM-dd");
+                //string kwQry = "[GetKeywords_48_D] '" + myDate + "'";//changes    
+                string kwQry = "[GetKeywords_340-349_3] '" + myDate + "'";//changes                
+
                 GetKeywords(kwQry);
                 if (lstKWs.Items.Count <= 0)
                     Environment.Exit(Environment.ExitCode);
@@ -84,12 +87,12 @@ namespace UniversalTracking
                     //ta = WOWS.getTop100YahooJapan(seid, kw);
                     //ta = WOWS.GetTop100Sogou(seid, kw);
                     //ta = WOWS.getTop100SmCnMobile(seid, kw);
-                    ta = WOWS.GetTop100HaoSou360(seid, kw);
+                    //ta = WOWS.GetTop100HaoSou360(seid, kw);
                     //ta = WOWS.GetTop100SmCnMobile(seid,kw);
                     //ta = WOWS.GetTop100Sogou(seid, kw);z
                     //ta = WOWS.GetBaidu(seid, kw);
                     //ta = WOWS.GetTop100Naver(seid, kw);
-                    //ta = WOWS.GetTop100PriceSearcher(seid, kw);
+                    ta = WOWS.GetTop100PriceSearcher(seid, kw);
 
                     if (ta.Result.Count >= 0)
                     {
@@ -232,7 +235,7 @@ namespace UniversalTracking
         public void sendtoAPI(Task<ArrayList> ta,string seid, string kn)
         {          
 
-            const string path = @"C:\Inetpub\wwwroot\data_256_6_GT70_Universal.xml";//changes 
+            const string path = @"C:\Inetpub\wwwroot\PriceSearcher_3.xml";//changes 
             
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             ArrayList seresults = ta.Result;                     
@@ -306,8 +309,8 @@ namespace UniversalTracking
                         writer.WriteEndAttribute();
                        
                         string dURL = seresults[i].ToString();
-                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -325,7 +328,7 @@ namespace UniversalTracking
                 {
                     if (seresults.Count > 50)
                     {
-                        //sendDatatoURL(path);
+                        sendDatatoURL(path);
                         string strInsert = "insert into dashboard_data(date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";
                         SqlConnection objCon = null;
                         try

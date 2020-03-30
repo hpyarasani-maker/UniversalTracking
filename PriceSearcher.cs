@@ -58,10 +58,10 @@ namespace UniversalTracking
 
                     alresult = GetOxylabsWebDataSources(ul, "desktop");
 
-                    //if (i == 0 && alresult.Result.Count == 0)
-                    //{
-                    //    goto REPEAT;
-                    //}
+                    if (i == 0 && alresult.Result.Count == 0)
+                    {
+                        goto REPEAT;
+                    }
 
                     try
                     {
@@ -167,8 +167,7 @@ namespace UniversalTracking
                 pages = 1,
                 start_page = 1,
                 parse = false,
-                user_agent_type = type,
-                render = "html"
+                user_agent_type = type
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);

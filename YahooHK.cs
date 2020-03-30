@@ -223,8 +223,7 @@ namespace UniversalTracking
                 pages = 1,
                 start_page = 1,
                 parse = false,
-                user_agent_type = type,
-                render= "html"
+                user_agent_type = type
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);

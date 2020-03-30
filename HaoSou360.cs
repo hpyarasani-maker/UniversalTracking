@@ -61,13 +61,13 @@ namespace UniversalTracking
                     REPEAT:
 
                     alresult = GetOxylabsWebDataSources(ul, "desktop");
-                   
-                    
 
-                    //if (alresult.Result.Count == 0)
-                    //{
-                    //    goto REPEAT;
-                    //}
+
+
+                    if (alresult.Result.Count == 0)
+                    {
+                        goto REPEAT;
+                    }
 
                     try
                     {
@@ -77,17 +77,17 @@ namespace UniversalTracking
                             jid = src[2];
                             if (String.IsNullOrEmpty(src[1]))
                             {
-                                System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", src[1]);
+                                //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", src[1]);
                                 goto REPEAT;
                             }
                             JObject obj = JObject.Parse(src[1]);
                             pagehtml = obj["results"][0]["content"].Value<string>();
-                           System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
+                           //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
                             //File.WriteAllText(@"C:\inetpub\wwwroot\html\"+jobid+"_withOut filter_"+".html", html, Encoding.UTF8);
                             if (pagehtml.Contains("No results found for") || String.IsNullOrEmpty(pagehtml) || pagehtml.Contains("無法找到符合") || pagehtml.Contains("Sorry! Not found") || pagehtml.Contains("對不起！找不到") || pagehtml.Contains("Sorry") || pagehtml.Contains("シルクエピル") || pagehtml.Contains("Dear, the system has detected that you operate too frequently") || pagehtml.Contains("亲，系统检测到您操作过于频繁。"))
                             {
                                 Thread.Sleep(5000);
-                                System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
+                                //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
                                 goto REPEAT;
                             }
                             html += obj["results"][0]["content"].Value<string>();

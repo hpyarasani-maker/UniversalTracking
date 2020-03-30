@@ -33,7 +33,7 @@ namespace UniversalTracking
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //Sogou WOWS = new Sogou();
         //Naver WOWS = new Naver();
-       //PriceSearcher WOWS = new PriceSearcher();
+      //PriceSearcher WOWS = new PriceSearcher();
 
         //int count; 
 
@@ -239,7 +239,7 @@ namespace UniversalTracking
         {
 
             //const string path = @"C:\Inetpub\wwwroot\data_256_6_GT70_Universal.xml";
-            const string path = @"C:\Inetpub\wwwroot\data_194_6_GT50_Universal.xml";//changes
+            const string path = @"C:\Inetpub\wwwroot\YahooJapanMobile_194_6_WC_50_Universal.xml";//changes
 
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             ArrayList seresults = ta.Result;                     
@@ -253,7 +253,7 @@ namespace UniversalTracking
                     results.Refresh();
                 }));
 
-               /* XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
+               /*XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
 
                 writer.Formatting = System.Xml.Formatting.Indented;
                 writer.Indentation = 2;

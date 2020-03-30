@@ -58,10 +58,10 @@ namespace UniversalTracking
 
                     alresult = GetOxylabsWebDataSources(ul, "desktop");
 
-                    //if (i == 0 && alresult.Result.Count == 0)
-                    //{
-                    //    goto REPEAT;
-                    //}
+                    if (i == 0 && alresult.Result.Count == 0)
+                    {
+                        goto REPEAT;
+                    }
 
                     try
                     {

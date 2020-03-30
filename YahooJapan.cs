@@ -73,7 +73,7 @@ namespace UniversalTracking
                         jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
                         pagehtml = obj["results"][0]["content"].Value<string>();
-                        System.IO.File.WriteAllText(@"D:\source\48\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);                                         
+                        //System.IO.File.WriteAllText(@"D:\source\48\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);                                         
                         if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))//48
                         {
                             if (ct <= 2)
@@ -144,7 +144,7 @@ namespace UniversalTracking
                         jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
                         pagehtml = obj["results"][0]["content"].Value<string>();
-                        System.IO.File.WriteAllText(@"D:\source\48\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                        System.IO.File.WriteAllText(@"D:\source\194\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
                         if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))//48
                         {
                             if (ct <= 2)
@@ -272,7 +272,7 @@ namespace UniversalTracking
                 }
 
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception ex) { }
 
             return await Task.FromResult<ArrayList>(yahoojapan);
         }       
@@ -292,7 +292,7 @@ namespace UniversalTracking
                 pages = 1,
                 start_page = 1,
                 parse = false,
-                user_agent_type = type                
+                user_agent_type = type
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);

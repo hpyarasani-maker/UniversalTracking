@@ -13,7 +13,7 @@ namespace UniversalTracking
         //public string geo_location { get; set; }        
         //public string user_agent_type { get; set; }
         //public string url { get; set; }
-
+        public string render { get; set; }
         public string source { get; set; }
         public string domain { get; set; }
         public string[] query { get; set; }

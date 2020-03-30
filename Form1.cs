@@ -27,13 +27,13 @@ namespace UniversalTracking
         //Baidu WOWS = new Baidu();
         //Sogou WOWS = new Sogou();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
-        //YahooJapan WOWS = new YahooJapan();
+        YahooJapan WOWS = new YahooJapan();
         //YahooHK WOWS = new YahooHK();
         //HaoSou360 WOWS = new HaoSou360();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //Sogou WOWS = new Sogou();
         //Naver WOWS = new Naver();
-        PriceSearcher WOWS = new PriceSearcher();
+      //PriceSearcher WOWS = new PriceSearcher();
 
         //int count; 
 
@@ -41,11 +41,11 @@ namespace UniversalTracking
         {
             InitializeComponent();
             //count = 0;   // Common.GetOxylabsCount();          
-            //timerExit();
+            timerExit();
         }
         void timerExit()
         {
-            timer.Interval = 720 * 60000;
+            timer.Interval = 30 * 60000;
             timer.Tick += new EventHandler(timer_Tick);
             timer.Start();
         }
@@ -57,8 +57,9 @@ namespace UniversalTracking
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //this.Text = "YahooHK_256_6_WC_70_Universal";//changes
-            this.Text = "PriceSearcher_GT50_3";
+            //this.Text = "YahooHK_256_6_WC_70_Universal";
+            this.Text = "YahooJapanMobile_194_6_WC_50_Universal";//changes
+
             Thread t = new Thread(new ThreadStart (StartProcess));
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
@@ -71,10 +72,9 @@ namespace UniversalTracking
             Task<ArrayList> ta = null;
             while (true)
             {
-                string myDate = DateTime.Today.ToString("yyyy-MM-dd");
-                //string kwQry = "[GetKeywords_48_D] '" + myDate + "'";//changes    
-                string kwQry = "[GetKeywords_340-349_3] '" + myDate + "'";//changes                
-
+                string myDate = DateTime.Today.ToString("yyyy-MM-dd");             
+                string kwQry = "[GetKeywords_194_6] '" + myDate + "'";    
+                //string kwQry = "[GetKeywords_175_D] '" + myDate + "'";//changes
                 GetKeywords(kwQry);
                 if (lstKWs.Items.Count <= 0)
                     Environment.Exit(Environment.ExitCode);
@@ -84,16 +84,17 @@ namespace UniversalTracking
                     string seid = s.Split(':')[0];
                     string kw = s.Split(':')[1];
                     //ta = WOWS.getTop100YahooHK(seid, kw);
-                    //ta = WOWS.getTop100YahooJapan(seid, kw);
+                    ta = WOWS.getTop100YahooJapan(seid, kw);
                     //ta = WOWS.GetTop100Sogou(seid, kw);
                     //ta = WOWS.getTop100SmCnMobile(seid, kw);
                     //ta = WOWS.GetTop100HaoSou360(seid, kw);
                     //ta = WOWS.GetTop100SmCnMobile(seid,kw);
-                    //ta = WOWS.GetTop100Sogou(seid, kw);z
+                    //ta = WOWS.GetTop100Sogou(seid, kw);
                     //ta = WOWS.GetBaidu(seid, kw);
                     //ta = WOWS.GetTop100Naver(seid, kw);
-                    ta = WOWS.GetTop100PriceSearcher(seid, kw);
+                    //ta = WOWS.GetTop100PriceSearcher(seid, kw);
 
+                    
                     if (ta.Result.Count >= 0)
                     {
                         sendtoAPI(ta, seid, kw);
@@ -111,9 +112,11 @@ namespace UniversalTracking
                 //lstKWs.Items.Add("277:organic search");          
                 //lstKWs.Items.Add("138:2금융권대출");
                 //lstKWs.Items.Add("175:seo multiple domains");
-                //lstKWs.Items.Add("175:macbook pro");
+                //lstKWs.Items.Add("38:ipad");
+                //lstKWs.Items.Add("340:smartview2");
+
             });
-           // return;
+           //return;
 
             try
             {
@@ -233,10 +236,11 @@ namespace UniversalTracking
 
 
         public void sendtoAPI(Task<ArrayList> ta,string seid, string kn)
-        {          
+        {
 
-            const string path = @"C:\Inetpub\wwwroot\PriceSearcher_3.xml";//changes 
-            
+            //const string path = @"C:\Inetpub\wwwroot\data_256_6_GT70_Universal.xml";
+            const string path = @"C:\Inetpub\wwwroot\YahooJapanMobile_194_6_WC_50_Universal.xml";//changes
+
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             ArrayList seresults = ta.Result;                     
             if (seresults.Count < 1)
@@ -248,7 +252,31 @@ namespace UniversalTracking
                     label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
                     results.Refresh();
                 }));
-                
+
+               /*XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
+
+                writer.Formatting = System.Xml.Formatting.Indented;
+                writer.Indentation = 2;
+
+                writer.WriteStartDocument();
+
+                writer.WriteStartElement("", "searchResults", "");
+                writer.WriteStartElement("", "searchResult", "");
+                writer.WriteStartAttribute("searchEngineId");
+                writer.WriteString(seid);
+                writer.WriteStartAttribute("keyword");
+                writer.WriteString(kn);
+                writer.WriteStartAttribute("date");
+                writer.WriteString(myDate);
+
+                writer.WriteEndElement();
+
+                writer.WriteEndDocument();
+
+                writer.Close();
+
+                sendDatatoURL(path);
+                InsertDashBoardData(myDate, kn, seid, string.Empty);*/
 
             }
             else if (seresults[0].ToString().Contains("e100") && seresults[0].ToString().Trim().StartsWith("e100"))
@@ -309,8 +337,8 @@ namespace UniversalTracking
                         writer.WriteEndAttribute();
                        
                         string dURL = seresults[i].ToString();
-                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -491,6 +519,42 @@ namespace UniversalTracking
             // Get its value
             string name = node.InnerText;
             return name;
+        }
+        void InsertDashBoardData(string ddate, string kwd, string seid, string url)
+        {
+            string strInsert = "insert into dashboard_data(date,name,seid,url)values(Convert(varchar(10),'" + ddate + "',103),N'" + kwd.Replace("'", "''") + "'," + seid + ",N'" + url.Replace("'", "''") + "')";
+            SqlConnection objCon = null;
+            SqlDataReader objData = null;
+            try
+            {
+                objCon = new SqlConnection(strConn());
+                objCon.Open();
+                SqlCommand objCmd = new SqlCommand(strInsert, objCon);
+                objCmd.CommandTimeout = 0;
+                objData = objCmd.ExecuteReader(CommandBehavior.CloseConnection);
+            }
+            catch (SqlException e)
+            {
+                string errMsg = "Database Connection is temporarily not working\n" + e.ToString();
+                //MessageBox.Show(errMsg);
+                errorList.Invoke((MethodInvoker)(delegate ()
+                {
+                    errorList.Items.Add(errMsg);
+                }));
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.ToString());
+                errorList.Invoke((MethodInvoker)(delegate ()
+                {
+                    errorList.Items.Add(ex.ToString());
+                }));
+            }
+            finally
+            {
+                objCon.Dispose();
+                objCon.Close();
+            }
         }
     }
 }

@@ -13,18 +13,18 @@ using System.Web;
 
 namespace UniversalTracking
 {
-    public class SmCnMobile_278
+   public class Rambler
     {
         public string seid;
         public string kw;
-        public async Task<ArrayList> GetTop100SmCnMobile(string seid, string keyword)
+        public async Task<ArrayList> GetTop100Rambler(string seid, string keyword)
         {
             ArrayList myArrayList = new ArrayList();
             switch (seid)
             {
-                case "278":
+                case "19":
                     {
-                        myArrayList = getTop100SmCnMobile(seid, keyword).Result;
+                        myArrayList = getTop100RamblerDesktop(seid, keyword).Result;
                         break;
                     }
             }
@@ -32,7 +32,7 @@ namespace UniversalTracking
         }
 
 
-        public async Task<ArrayList> getTop100SmCnMobile(string seid, string kw)
+        public async Task<ArrayList> getTop100RamblerDesktop(string seid, string kw)
         {
             Task<ArrayList> alresult = null;
             ArrayList arRes = new ArrayList();
@@ -47,18 +47,17 @@ namespace UniversalTracking
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 1; i < 11; i++)
                 {
                     string jid = "";
-                    int n = i + 1;
 
-                    ul = "https://m.sm.cn/s?q=" + kw + "&from=smor&safe=1&page=" + n;
+                    ul = "http://nova.rambler.ru/search?pagelen=10&query="+ kw +"&page=" + i;
 
-                    //int ct = 0;
                     REPEAT:
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
 
-                    if(alresult.Result.Count == 0)
+                    alresult = GetOxylabsWebDataSources(ul, "desktop");
+
+                    if (i == 0 && alresult.Result.Count == 0)
                     {
                         goto REPEAT;
                     }
@@ -71,9 +70,9 @@ namespace UniversalTracking
                             jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
                             pagehtml = obj["results"][0]["content"].Value<string>();
-                            //System.IO.File.WriteAllText(@"D:\source\278\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                            //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jid + ".html", pagehtml, Encoding.UTF8);
 
-                            if (pagehtml.Contains("Sorry, no results were found for") || pagehtml.Contains("抱歉，没有找到与“ipad”相关的结果。"))
+                            if (pagehtml.Contains("Sorry, no results were found for"))
                             {
                                 goto REPEAT;
                             }
@@ -87,7 +86,7 @@ namespace UniversalTracking
                         string error = ex.Message.ToString();
                     }
                 }
-                ArrayList addURLs = SmCnMobilePattern(html).Result;
+                ArrayList addURLs = RamblerDesktopPattern(html).Result;
                 foreach (string str in addURLs)
                 {
                     if (!arRes.Contains(str))
@@ -102,20 +101,23 @@ namespace UniversalTracking
             return await Task.FromResult<ArrayList>(arRes);
         }
 
-        public async Task<ArrayList> SmCnMobilePattern(string html)
+        
+
+        public async Task<ArrayList> RamblerDesktopPattern(string html)
         {
-            ArrayList SmcnMobile = new ArrayList();
+            ArrayList top100Rambler = new ArrayList();
             ArrayList alDup = new ArrayList();
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='c-header-inner c-flex-1']|.//div[@class='c-nature--v1_0_0']|.//div[@class='c-source--v1_0_0 c-source-l c-margin-top-s']");
+            
 
-            foreach (var links in hn)
+            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//h2[@class='Serp__item__title--2KnDi']/a");
+
+            try
             {
-                try
+                foreach (var links in hn)
                 {
-                    //HtmlNode a = links.SelectSingleNode(".//a");
                     string urls = links.Attributes["href"].Value.Trim();
                     urls = HttpUtility.UrlDecode(urls);
                     if (urls.StartsWith("http") || urls.StartsWith("https"))
@@ -125,26 +127,34 @@ namespace UniversalTracking
                         {
                             indx = urls.LastIndexOf("https://");
                         }
+                        urls = urls.Remove(0, indx);
                         alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
-                    foreach (string s in alDup)
-                    {
-                        if (SmcnMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
-                        if (s.Contains("mparticle") || s.Contains("zm.sm-tc.cn")) continue;
-                        SmcnMobile.Add(s);
-                    }
-                    if (SmcnMobile.Count > 100)
-                    {
-                        SmcnMobile.RemoveRange(100, SmcnMobile.Count - 100);
-                    }
                 }
-                catch { continue; }
+                foreach (string s in alDup)
+                {
+                    if (top100Rambler.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    top100Rambler.Add(s);
+                }
+                if (top100Rambler.Count > 100)
+                {
+                    top100Rambler.RemoveRange(100, top100Rambler.Count - 100);
+                }
             }
-            return await Task.FromResult<ArrayList>(SmcnMobile); ;
+
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message.ToString());
+            }
+            return await Task.FromResult<ArrayList>(top100Rambler);
         }
+
+        
+
 
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
+            //Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries/batch");//io/v1/stats
             Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries");//io/v1/stats
 
             string username = "gpidatametrics";
@@ -160,8 +170,7 @@ namespace UniversalTracking
                 pages = 1,
                 start_page = 1,
                 parse = false,
-                user_agent_type = type,
-                render = "html"
+                user_agent_type = type
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);

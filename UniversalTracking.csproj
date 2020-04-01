@@ -66,6 +66,7 @@
     <Compile Include="PriceSearcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rambler.cs" />
     <Compile Include="SmCnMobile_278.cs" />
     <Compile Include="Sogou.cs" />
     <Compile Include="YahooHK.cs" />

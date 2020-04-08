@@ -11,7 +11,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace UniversalTracking { 
+namespace UniversalTracking
+{
     public class Naver
     {
         public string seid;
@@ -38,55 +39,49 @@ namespace UniversalTracking {
 
         public async Task<ArrayList> getTop100NaverDesktop(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
 
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
 
-                int j = 1;
                 for (int i = 0; i < 10; i++)
                 {
-                    string jid = "";
-
-                    if (i > 0) j = (i * 10) + 1;
+                    int j = (i * 10) + 1;
 
                     ul = "http://web.search.naver.com/search.naver?where=webkr&query=" + HttpUtility.UrlEncode(HttpUtility.HtmlDecode(kw)) + "&start=" + j + "&display=10&ie=utf8";
 
-            
                     REPEAT:
 
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
 
-                    if (i == 0 && alresult.Result.Count == 0)
+                    if (i == 0 && alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
-                    
+
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            //System.IO.File.WriteAllText(@"D:\source\newresults\138\" + kw + "_" + j + "_" + jid + ".html", pagehtml, Encoding.UTF8);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            //System.IO.File.WriteAllText(@"D:\source\newresults\138\" + kw + "_" + j + "_" + jobid + ".html", pagehtml, Encoding.UTF8);
 
                             if (pagehtml.Contains("Sorry, no results were found for"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
@@ -94,6 +89,7 @@ namespace UniversalTracking {
                         string error = ex.Message.ToString();
                     }
                 }
+
                 ArrayList addURLs = NaverDesktopPattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -108,52 +104,45 @@ namespace UniversalTracking {
 
         public async Task<ArrayList> getTop100NaverMobile(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
 
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
 
-                int j = 1;
-                
                 for (int i = 0; i < 7; i++)
                 {
-                    string jid = "";
-
-                    j = (i * 15) + 1;
+                    int j = (i * 15) + 1;
 
                     ul = "https://m.search.naver.com/search.naver?where=m&sm=mtb_pge&query=" + HttpUtility.UrlEncode(HttpUtility.HtmlDecode(kw)) + "&start=" + j + "&page=" + (i + 2) + "&display=15";
 
-                    
                     REPEAT:
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
+                    alresult = await GetOxylabsWebDataSources(ul, "mobile");
 
-                    if (i == 0 && alresult.Result.Count == 0) goto REPEAT;
+                    if (i == 0 && alresult.Count == 0) goto REPEAT;
 
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            System.IO.File.WriteAllText(@"D:\source\newresults\440\" + kw + "_" + j + "_" + jid + ".html", pagehtml, Encoding.UTF8);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            System.IO.File.WriteAllText(@"D:\source\newresults\440\" + kw + "_" + j + "_" + jobid + ".html", pagehtml, Encoding.UTF8);
 
                             if (pagehtml.Contains("Sorry, no results were found for"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
@@ -161,6 +150,7 @@ namespace UniversalTracking {
                         string error = ex.Message.ToString();
                     }
                 }
+
                 ArrayList addURLs = NaverMobilePattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -180,39 +170,40 @@ namespace UniversalTracking {
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
-         
+
             HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='web_url']/a");
 
-        try
-        {
-            foreach (var links in hn)
+            try
             {
-                string urls = links.Attributes["href"].Value.Trim();
-                urls = HttpUtility.UrlDecode(urls);
-                if (urls.StartsWith("http") || urls.StartsWith("https"))
+                foreach (var links in hn)
                 {
-                    int indx = urls.LastIndexOf("http://");
-                    if (indx < 0)
+                    string urls = links.Attributes["href"].Value.Trim();
+                    urls = HttpUtility.UrlDecode(urls);
+                    if (urls.StartsWith("http") || urls.StartsWith("https"))
                     {
-                        indx = urls.LastIndexOf("https://");
+                        int indx = urls.LastIndexOf("http://");
+                        if (indx < 0)
+                        {
+                            indx = urls.LastIndexOf("https://");
+                        }
+                        urls = urls.Remove(0, indx);
+                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
-                    urls = urls.Remove(0, indx);
-                    alDup.Add(HttpUtility.HtmlDecode(urls));
+                }
+                foreach (string s in alDup)
+                {
+                    if (top100NaverDesktop.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    top100NaverDesktop.Add(s);
+                }
+                if (top100NaverDesktop.Count > 100)
+                {
+                    top100NaverDesktop.RemoveRange(100, top100NaverDesktop.Count - 100);
                 }
             }
-            foreach (string s in alDup)
-            {
-                if (top100NaverDesktop.Contains(s) || string.IsNullOrEmpty(s)) continue;
-                top100NaverDesktop.Add(s);
-            }
-            if (top100NaverDesktop.Count > 100)
-            {
-                top100NaverDesktop.RemoveRange(100, top100NaverDesktop.Count - 100);
-            }
-        }
 
-        catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
-        return await Task.FromResult<ArrayList>(top100NaverDesktop);
+            catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
+
+            return await Task.FromResult<ArrayList>(top100NaverDesktop);
         }
 
         public async Task<ArrayList> NaverMobilePattern(string html)
@@ -243,7 +234,7 @@ namespace UniversalTracking {
                     }
                 }
                 foreach (string s in alDup)
-                {                    
+                {
                     if (top100NaverMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
                     top100NaverMobile.Add(s);
                 }
@@ -312,7 +303,7 @@ namespace UniversalTracking {
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             //foreach (JToken link in links)
             //{

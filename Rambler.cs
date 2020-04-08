@@ -13,7 +13,7 @@ using System.Web;
 
 namespace UniversalTracking
 {
-   public class Rambler
+    public class Rambler
     {
         public string seid;
         public string kw;
@@ -34,58 +34,55 @@ namespace UniversalTracking
 
         public async Task<ArrayList> getTop100RamblerDesktop(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
 
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
+                int i = 1;
+                //for (int i = 1; i <= 10; i++)
+                //{
+                ul = "http://nova.rambler.ru/search?pagelen=100&query=" + kw + "&page=" + i;
 
-                for (int i = 1; i < 11; i++)
+                REPEAT:
+
+                alresult = await GetOxylabsWebDataSources(ul, "desktop");
+
+                if (alresult.Count == 0)
                 {
-                    string jid = "";
+                    goto REPEAT;
+                }
 
-                    ul = "http://nova.rambler.ru/search?pagelen=10&query="+ kw +"&page=" + i;
-
-                    REPEAT:
-
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
-
-                    if (i == 0 && alresult.Result.Count == 0)
+                try
+                {
+                    foreach (string[] src in alresult)
                     {
-                        goto REPEAT;
-                    }
+                        JObject obj = JObject.Parse(src[1]);
+                        string pagehtml = obj["results"][0]["content"].Value<string>();
+                        jobid = src[2];
+                        device = src[3];
 
-                    try
-                    {
-                        foreach (string[] src in alresult.Result)
+                        //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jobid + ".html", pagehtml, Encoding.UTF8);
+
+                        if (pagehtml.Contains("Sorry, no results were found for"))
                         {
-                            keyword = src[0];
-                            jid = src[2];
-                            JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jid + ".html", pagehtml, Encoding.UTF8);
-
-                            if (pagehtml.Contains("Sorry, no results were found for"))
-                            {
-                                goto REPEAT;
-                            }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+                            goto REPEAT;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        string error = ex.Message.ToString();
+
+                        html += pagehtml;
                     }
                 }
+                catch (Exception ex)
+                {
+                    string error = ex.Message.ToString();
+                }
+                //}
+
                 ArrayList addURLs = RamblerDesktopPattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -101,8 +98,6 @@ namespace UniversalTracking
             return await Task.FromResult<ArrayList>(arRes);
         }
 
-        
-
         public async Task<ArrayList> RamblerDesktopPattern(string html)
         {
             ArrayList top100Rambler = new ArrayList();
@@ -110,7 +105,6 @@ namespace UniversalTracking
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
-            
 
             HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//h2[@class='Serp__item__title--2KnDi']/a");
 
@@ -149,9 +143,6 @@ namespace UniversalTracking
             return await Task.FromResult<ArrayList>(top100Rambler);
         }
 
-        
-
-
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
             //Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries/batch");//io/v1/stats
@@ -166,7 +157,7 @@ namespace UniversalTracking
             {
                 source = "universal",
                 url = ul,
-                limit = 10,
+                limit = 100,
                 pages = 1,
                 start_page = 1,
                 parse = false,
@@ -206,7 +197,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             //foreach (JToken link in links)
             //{

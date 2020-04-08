@@ -14,8 +14,8 @@ using System.Web;
 namespace UniversalTracking
 {
     public class YahooHK
-    {     
-       public async Task<ArrayList> getTop100YahooHK(string seid, string keyword)
+    {
+        public async Task<ArrayList> getTop100YahooHK(string seid, string keyword)
         {
             ArrayList myArrayList = new ArrayList();
             switch (seid)
@@ -36,99 +36,105 @@ namespace UniversalTracking
         public async Task<ArrayList> GetTop100YahaooHKDesktop(string seid, string kw)
         {
             ArrayList arRes = new ArrayList();
-            string html = null;
+            string html = "";
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 0; i < 2; i++)
                 {
-                    string jid = "";
-                    int st = (50 * i) + 1;                    
-                    ul = "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&b=" + st + "&pz=100";              
-                    Repeat:                    
-                    //alresult = GetHTML(kw, Convert.ToInt32(seid), ul);                    
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
-                    foreach (string[] src in alresult.Result)
+                    int st = (50 * i) + 1;
+                    ul = "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&b=" + st + "&pz=100";
+
+                    Repeat:
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
+
+                    foreach (string[] src in alresult)
                     {
-                        keyword = src[0];
-                        jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
-                        pagehtml = obj["results"][0]["content"].Value<string>();
-                        //System.IO.File.WriteAllText(@"D:\source\38\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                        string pagehtml = obj["results"][0]["content"].Value<string>();
+                        jobid = src[2];
+                        device = src[3];
+
+                        //System.IO.File.WriteAllText(@"D:\source\38\" + kw + "_" + i + 1 + "_" + jobid + ".html", pagehtml);
                         if (pagehtml.Contains("consent-semi-transparent") || pagehtml.Contains("consent-overlay") || pagehtml.Contains("無法找到符合"))//38 選擇較常用的字, 或減省符號如「，」 或「@」。 
                         {
                             goto Repeat;
                         }
-                        html += obj["results"][0]["content"].Value<string>();
-                        jobid = src[2];
-                        device = src[3];
+
+                        html += pagehtml;
                     }
-                }                                
-                        ArrayList addURLs = getTop100YahooHKDesktopPattern(html).Result;                        
-                        foreach (string str in addURLs)
-                        {
-                            if (!arRes.Contains(str))
-                                arRes.Add(str);
-                        }               
-                  
+                }
+
+                ArrayList addURLs = getTop100YahooHKDesktopPattern(html).Result;
+                foreach (string str in addURLs)
+                {
+                    if (!arRes.Contains(str))
+                        arRes.Add(str);
+                }
+
             }
-            catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message.ToString());
+            }
             return await Task.FromResult<ArrayList>(arRes);
         }
+
         public async Task<ArrayList> GetTop100YahaooHKMobile(string seid, string kw)
         {
             ArrayList arRes = new ArrayList();
-            string html = null;
+            string html = "";
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 0; i < 2; i++)
                 {
-                    string jid = "";
-                    int st = (50 * i) + 1;                   
-                    ul = "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&.tsrc=yfp-hrmob-sb&b=" + st + "&pz=100";                   
-                    Repeat:                   
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
-                    foreach (string[] src in alresult.Result)
+                    int st = (50 * i) + 1;
+                    ul = "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&.tsrc=yfp-hrmob-sb&b=" + st + "&pz=100";
+                    Repeat:
+                    alresult = await GetOxylabsWebDataSources(ul, "mobile");
+
+                    foreach (string[] src in alresult)
                     {
-                        keyword = src[0];
-                        jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
-                        pagehtml = obj["results"][0]["content"].Value<string>();
-                        //System.IO.File.WriteAllText(@"D:\source\38\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                        string pagehtml = obj["results"][0]["content"].Value<string>();
+                        jobid = src[2];
+                        device = src[3];
+
+                        //System.IO.File.WriteAllText(@"D:\source\38\" + kw + "_" + i + 1 + "_" + jobid + ".html", pagehtml);
                         if (pagehtml.Contains("consent-semi-transparent") || pagehtml.Contains("consent-overlay") || pagehtml.Contains("無法找到符合"))//38 選擇較常用的字, 或減省符號如「，」 或「@」。 
                         {
                             goto Repeat;
                         }
-                        html += obj["results"][0]["content"].Value<string>();
-                        jobid = src[2];
-                        device = src[3];
+
+                        html += pagehtml;
                     }
-                }                             
-                   
-                        ArrayList addURLs = getTop100YahooHKMobilePattern(html).Result;
-                        foreach (string str in addURLs)
-                        {
-                            if (!arRes.Contains(str))
-                                arRes.Add(str);
-                        }
-                                    
+                }
+
+                ArrayList addURLs = getTop100YahooHKMobilePattern(html).Result;
+                foreach (string str in addURLs)
+                {
+                    if (!arRes.Contains(str))
+                        arRes.Add(str);
+                }
+
             }
-            catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message.ToString());
+            }
+
             return await Task.FromResult<ArrayList>(arRes);
         }
+
         public async Task<ArrayList> getTop100YahooHKDesktopPattern(string html)
         {
             ArrayList al = new ArrayList();
@@ -156,7 +162,7 @@ namespace UniversalTracking
                             indx = urls.LastIndexOf("/RK=2");
                             int length = urls.Length;
                             urls = urls.Remove(indx);
-                        }                        
+                        }
                         al.Add(HttpUtility.HtmlDecode(urls));
                     }
                 }
@@ -196,7 +202,7 @@ namespace UniversalTracking
                             int length = urls.Length;
                             urls = urls.Remove(indx);
                         }
-                       
+
                         al.Add(HttpUtility.HtmlDecode(urls));
 
                     }
@@ -205,7 +211,7 @@ namespace UniversalTracking
 
             }
             return await Task.FromResult<ArrayList>(al);
-        }         
+        }
 
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
@@ -214,7 +220,7 @@ namespace UniversalTracking
             string password = "sdV5X3fcX6";
 
             string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(username + ":" + password));
-            
+
             OxyParams op = new OxyParams()
             {
                 source = "universal",
@@ -259,7 +265,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             string kw = jo["query"].Value<string>();
             string href = jo["_links"][1]["href"].Value<string>();

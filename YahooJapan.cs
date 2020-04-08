@@ -13,47 +13,44 @@ using System.Web;
 
 namespace UniversalTracking
 {
-   public class YahooJapan
+    public class YahooJapan
     {
-       public async Task<ArrayList> getTop100YahooJapan(string seid, string keyword)
+        public async Task<ArrayList> getTop100YahooJapan(string seid, string keyword)
         {
             ArrayList myArrayList = new ArrayList();
             switch (seid)
             {
                 case "48":
                     {
-                        myArrayList = GetTop100YahaooJapanDesktop(seid,keyword).Result;
+                        myArrayList = GetTop100YahaooJapanDesktop(seid, keyword).Result;
                         break;
                     }
                 case "194":
                     {
-                        myArrayList = GetTop100YahaooJapanMobile(seid,keyword).Result;
+                        myArrayList = GetTop100YahaooJapanMobile(seid, keyword).Result;
                         break;
                     }
             }
             return await Task.FromResult<ArrayList>(myArrayList);
         }
         public async Task<ArrayList> GetTop100YahaooJapanDesktop(string seid, string kw)
-        {           
-            Task<ArrayList> alresult = null;
+        {
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
             int ct;
             int lp2;
-            string html = null;
+            string html = "";
             try
             {
                 lp2 = 0;
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 0; i < 10; i++)
                 {
-                    string jid = "";
-                    int st = (10 * i) + 1;                    
-                    ul = "https://search.yahoo.co.jp/search?p=" + kw + "&ei=UTF-8&fr=top_ga1&n=10&fl=0&x=wrt&b=" + st + "&pz=10";                    
+                    int st = (10 * i) + 1;
+                    ul = "https://search.yahoo.co.jp/search?p=" + kw + "&ei=UTF-8&fr=top_ga1&n=10&fl=0&x=wrt&b=" + st + "&pz=10";
                     ct = 0;
                     Repeat:
                     if (ct >= 2)
@@ -64,16 +61,17 @@ namespace UniversalTracking
                     {
                         break;
                     }
-                    //alresult = GetHTML(kw, Convert.ToInt32(seid), ul);
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
 
-                    foreach (string[] src in alresult.Result)
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
+
+                    foreach (string[] src in alresult)
                     {
-                        keyword = src[0];
-                        jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
-                        pagehtml = obj["results"][0]["content"].Value<string>();
-                        //System.IO.File.WriteAllText(@"D:\source\48\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);                                         
+                        string pagehtml = obj["results"][0]["content"].Value<string>();
+                        jobid = src[2];
+                        device = src[3];
+
+                        //System.IO.File.WriteAllText(@"D:\source\48\" + kw + "_" + i + 1 + "_" + jobid + ".html", pagehtml);
                         if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))//48
                         {
                             if (ct <= 2)
@@ -87,33 +85,34 @@ namespace UniversalTracking
                                 goto Repeat;
                             }
                         }
-                        html += obj["results"][0]["content"].Value<string>();
-                        jobid = src[2];
-                        device = src[3];
+                        html += pagehtml;
                     }
-                }              
-                        ArrayList addURLs = getTop100YahooJapanDesktopPattern(html).Result;
-                        foreach (string str in addURLs)
-                        {
-                            if (!arRes.Contains(str))
-                                arRes.Add(str);
+                }
 
-                        }        
-             }
-            catch (Exception ex) { throw ex; }
+                ArrayList addURLs = getTop100YahooJapanDesktopPattern(html).Result;
+                foreach (string str in addURLs)
+                {
+                    if (!arRes.Contains(str))
+                        arRes.Add(str);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             return await Task.FromResult<ArrayList>(arRes);
         }
+
         public async Task<ArrayList> GetTop100YahaooJapanMobile(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
-            string html = null;
+            string html = "";
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
             int ct;
             int lp2;
             try
@@ -122,11 +121,10 @@ namespace UniversalTracking
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 0; i < 10; i++)
                 {
-                    string jid = "";
                     int st = (10 * i) + 1;
-                   
-                        ul = "https://search.yahoo.co.jp/search?p=" + kw + "&x=wrt&ei=UTF-8&fr=top_ga1&n=10&fl=0&b=" + st + "&pz=10";
-                    
+
+                    ul = "https://search.yahoo.co.jp/search?p=" + kw + "&x=wrt&ei=UTF-8&fr=top_ga1&n=10&fl=0&b=" + st + "&pz=10";
+
                     ct = 0;
                     Repeat:
                     if (ct >= 2)
@@ -137,14 +135,15 @@ namespace UniversalTracking
                     {
                         break;
                     }
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
-                    foreach (string[] src in alresult.Result)
+                    alresult = await GetOxylabsWebDataSources(ul, "mobile");
+                    foreach (string[] src in alresult)
                     {
-                        keyword = src[0];
-                        jid = src[2];
                         JObject obj = JObject.Parse(src[1]);
-                        pagehtml = obj["results"][0]["content"].Value<string>();
-                        System.IO.File.WriteAllText(@"D:\source\194\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                        string pagehtml = obj["results"][0]["content"].Value<string>();
+                        jobid = src[2];
+                        device = src[3];
+
+                        System.IO.File.WriteAllText(@"D:\source\194\" + kw + "_" + i + 1 + "_" + jobid + ".html", pagehtml);
                         if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))//48
                         {
                             if (ct <= 2)
@@ -158,22 +157,25 @@ namespace UniversalTracking
                                 goto Repeat;
                             }
                         }
-                        html += obj["results"][0]["content"].Value<string>();
-                        jobid = src[2];
-                        device = src[3];
+                        html += pagehtml;
                     }
                 }
-                        ArrayList addURLs = getTop100YahooJapanMobilePattern(html).Result;
-                        foreach (string str in addURLs)
-                        {
-                            if (!arRes.Contains(str))
-                                arRes.Add(str);
-                        }                   
-              }
-            catch (Exception ex) { throw ex; }
+
+                ArrayList addURLs = getTop100YahooJapanMobilePattern(html).Result;
+                foreach (string str in addURLs)
+                {
+                    if (!arRes.Contains(str))
+                        arRes.Add(str);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             return await Task.FromResult(arRes);
         }
+
         public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html)
         {
             ArrayList yahoojapan = new ArrayList();
@@ -225,7 +227,7 @@ namespace UniversalTracking
         {
             ArrayList yahoojapan = new ArrayList();
             ArrayList aldup = new ArrayList();
-          
+
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);//sw-Card__section
@@ -242,7 +244,7 @@ namespace UniversalTracking
                     ///amp/s/amp.olhardigital.com.br/dicas_e_tutoriais/noticia/como-ativar-o-modo-escuro-do-iphone/90652%3Fusqp%3Dmq331AQQKAGYAb37k5Gc1bbAKbABIA%253D%253D
                     if (urls.StartsWith("http") || urls.StartsWith("https") || urls.StartsWith("/amp/s/"))
                     {
-                        if(urls.StartsWith("/amp/s/"))
+                        if (urls.StartsWith("/amp/s/"))
                         {
                             urls = urls.Replace("/amp/s/", "https://");
                         }
@@ -275,7 +277,7 @@ namespace UniversalTracking
             catch (Exception ex) { }
 
             return await Task.FromResult<ArrayList>(yahoojapan);
-        }       
+        }
 
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
@@ -283,7 +285,7 @@ namespace UniversalTracking
             string username = "gpidatametrics";
             string password = "sdV5X3fcX6";
 
-            string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(username + ":" + password));            
+            string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(username + ":" + password));
             OxyParams op = new OxyParams()
             {
                 source = "universal",
@@ -328,7 +330,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             string kw = jo["query"].Value<string>();
             string href = jo["_links"][1]["href"].Value<string>();

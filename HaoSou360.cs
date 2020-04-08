@@ -40,49 +40,44 @@ namespace UniversalTracking
 
         public async Task<ArrayList> getTop100HaoSou360Desktop(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
 
                 for (int i = 1; i <= 10; i++)
                 {
-                    string jid = "";
-
                     ul = "https://www.so.com/s?ie=utf-8&shb=1&src=360sou_newhome&q=" + kw + "&pn=" + i;
 
                     REPEAT:
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
 
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
-
-
-
-                    if (alresult.Result.Count == 0)
+                    if (alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
 
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             if (String.IsNullOrEmpty(src[1]))
                             {
-                                //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", src[1]);
+                                //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jobid + ".html", src[1]);
                                 goto REPEAT;
                             }
+
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                           //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jobid + ".html", pagehtml);
                             //File.WriteAllText(@"C:\inetpub\wwwroot\html\"+jobid+"_withOut filter_"+".html", html, Encoding.UTF8);
                             if (pagehtml.Contains("No results found for") || String.IsNullOrEmpty(pagehtml) || pagehtml.Contains("無法找到符合") || pagehtml.Contains("Sorry! Not found") || pagehtml.Contains("對不起！找不到") || pagehtml.Contains("Sorry") || pagehtml.Contains("シルクエピル") || pagehtml.Contains("Dear, the system has detected that you operate too frequently") || pagehtml.Contains("亲，系统检测到您操作过于频繁。"))
                             {
@@ -90,17 +85,14 @@ namespace UniversalTracking
                                 //System.IO.File.WriteAllText(@"D:\24-03-2020\175\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
                     {
                         string error = ex.Message.ToString();
                     }
-
-                  
                 }
 
                 ArrayList addURLs = HaoSou360DesktopPattern(html).Result;
@@ -117,48 +109,44 @@ namespace UniversalTracking
 
         public async Task<ArrayList> getTop100HaoSou360Mobile(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
-            string html = null;
+            string html = "";
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 1; i <= 10; i++)
                 {
-                    string jid = "";
-
                     ul = "https://m.so.com/nextpage?q= " + kw + " &pn=" + i + "&ajax=1";
 
                     REPEAT:
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
+                    alresult = await GetOxylabsWebDataSources(ul, "mobile");
 
-                    if (alresult.Result.Count == 0)
+                    if (alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
 
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jid + ".html", pagehtml);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jobid + ".html", pagehtml);
                             //File.WriteAllText(@"C:\inetpub\wwwroot\"+jobid+"_withOut filter_"+".html", html, Encoding.UTF8);
                             if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
@@ -166,6 +154,7 @@ namespace UniversalTracking
                         string error = ex.Message.ToString();
                     }
                 }
+
                 ArrayList addURLs = HaoSou360MobilePattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -230,7 +219,6 @@ namespace UniversalTracking
                 }
             }
             catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
-            //catch (Exception ex) { }
 
             return await Task.FromResult(top100HaoSou360Desktop); ;
         }
@@ -280,7 +268,6 @@ namespace UniversalTracking
             return await Task.FromResult<ArrayList>(top100HaoSou360Mobile);
         }
 
-
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
             Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries");//io/v1/stats
@@ -299,7 +286,7 @@ namespace UniversalTracking
                 start_page = 1,
                 parse = false,
                 user_agent_type = type,
-                render= "html"
+                render = "html"
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);
@@ -335,7 +322,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             //foreach (JToken link in links)
             //{

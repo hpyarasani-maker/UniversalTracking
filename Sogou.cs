@@ -39,56 +39,51 @@ namespace UniversalTracking
 
         public async Task<ArrayList> getTop100SogouDesktop(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
 
                 for (int i = 1; i <= 10; i++)
                 {
-                    string jid = "";
                     ul = "https://www.sogou.com/web?query=" + kw + "&ie=utf8&page=" + i;
 
-                    //alresult = GetHTML(kw, Convert.ToInt32(seid), ul);
                     //int ct = 0;
                     REPEAT:
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
 
-                    if(alresult.Result.Count == 0)
+                    if (alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
 
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
 
-                            System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + i + ".html", obj["results"][0]["content"].Value<string>());
+                            //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + i + ".html", pagehtml);
                             if (pagehtml.Contains("Sorry, no results were found for") || pagehtml.Contains("抱歉，没有找到与“ipad”相关的结果。"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
                     {
                         string errorr = ex.Message.ToString();
                     }
-                    
                 }
 
                 ArrayList addURLs = SogouDesktopPattern(html).Result;
@@ -98,56 +93,55 @@ namespace UniversalTracking
                         arRes.Add(str);
                 }
             }
-            catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message.ToString());
+            }
 
             return await Task.FromResult(arRes);
         }
 
         public async Task<ArrayList> getTop100SogouMobile(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
-            string html = null;
+            string html = "";
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
             try
             {
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 for (int i = 1; i <= 10; i++)
                 {
-                    string jid = "";
-
                     ul = "https://m.sogou.com/web/searchList.jsp?keyword=" + kw + "&p=" + i + "&s_from=pagenext&showextquery=1";
 
                     REPEAT:
 
-                    alresult = GetOxylabsWebDataSources(ul, "mobile");
+                    alresult = await GetOxylabsWebDataSources(ul, "mobile");
 
-                    if(alresult.Result.Count == 0)
+                    if (alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
-                    
+
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            System.IO.File.WriteAllText(@"D:\source\278\" + kw + "_" + i + 1 + "_" + jid + ".html", pagehtml);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            System.IO.File.WriteAllText(@"D:\source\278\" + kw + "_" + i + 1 + "_" + jobid + ".html", pagehtml);
 
                             if (pagehtml.Contains("に一致する情報は見つかりませんでした。") || pagehtml.Contains("男の子リュックサック」に一致する情報は見つかりませんでした。"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
@@ -155,6 +149,7 @@ namespace UniversalTracking
                         string error = ex.Message.ToString();
                     }
                 }
+
                 ArrayList addURLs = SogouMobilePattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -162,7 +157,10 @@ namespace UniversalTracking
                         arRes.Add(str);
                 }
             }
-            catch (Exception ex) { throw new ArgumentException(ex.Message.ToString()); }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message.ToString());
+            }
 
             return await Task.FromResult<ArrayList>(arRes);
         }
@@ -220,21 +218,21 @@ namespace UniversalTracking
             doc.LoadHtml(html);
 
             HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='resultLink  ']|.//a[@class='resultLink']|.//a[@class='resultLink ellipsis']|.//a[@class='resultLink clamp2']");
-            
+
             Regex r1 = null;
-            Match m2 = null;            
+            Match m2 = null;
 
             foreach (var links in hn)
             {
                 try
                 {
-                 
+
                     string urls = links.Attributes["href"].Value;
                     urls = HttpUtility.UrlDecode(urls);
 
                     if (urls.Contains("&url") || urls.Contains("&url=") || urls.Contains("url="))
                     {
-                       
+
                         Regex r = new Regex("url=(.*)&amp;dp=1&amp;", RegexOptions.IgnoreCase);
                         if (r == null)
                         {
@@ -260,11 +258,11 @@ namespace UniversalTracking
                     }
                     if (!urls.Contains("tv.sogou.com"))
 
-                    if (urls.Contains("&vrid=") && urls.Contains("&wml"))
-                    {
-                       int index = urls.IndexOf("&vrid");
-                       urls = urls.Remove(index);
-                    }
+                        if (urls.Contains("&vrid=") && urls.Contains("&wml"))
+                        {
+                            int index = urls.IndexOf("&vrid");
+                            urls = urls.Remove(index);
+                        }
                     if (urls.StartsWith("http") || urls.StartsWith("https"))
                     {
                         if (urls.Contains("&amp;vrid") && urls.Contains("&amp;wml"))
@@ -300,7 +298,7 @@ namespace UniversalTracking
                 start_page = 1,
                 parse = false,
                 user_agent_type = type,
-                render = "html"
+                //render = "html"
             };
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(queryUri);
@@ -336,7 +334,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             //foreach (JToken link in links)
             //{

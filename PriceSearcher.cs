@@ -34,14 +34,12 @@ namespace UniversalTracking
 
         public async Task<ArrayList> getTop100PricesearcherUK(string seid, string kw)
         {
-            Task<ArrayList> alresult = null;
+            ArrayList alresult = null;
             ArrayList arRes = new ArrayList();
             string device = "";
             string jobid = "";
-            string keyword = "";
             string ul = "";
-            string pagehtml = "";
-            string html = null;
+            string html = "";
 
             try
             {
@@ -49,37 +47,36 @@ namespace UniversalTracking
 
                 for (int i = 1; i <= 10; i++)
                 {
-                    string jid = "";
                     //https://www.pricesearcher.com/gb/search/?p=1&q=dvd
-                    ul = "https://www.pricesearcher.com/gb/search/?p=" + i + "&q="+ kw +"&st=OR";
+                    ul = "https://www.pricesearcher.com/gb/search/?p=" + i + "&q=" + kw + "&st=OR";
                     //ul = "https://www.pricesearcher.com/gb/?p=" + i + "&q=" + kw + "";
 
                     REPEAT:
 
-                    alresult = GetOxylabsWebDataSources(ul, "desktop");
+                    alresult = await GetOxylabsWebDataSources(ul, "desktop");
 
-                    if (i == 0 && alresult.Result.Count == 0)
+                    if (i == 0 && alresult.Count == 0)
                     {
                         goto REPEAT;
                     }
 
                     try
                     {
-                        foreach (string[] src in alresult.Result)
+                        foreach (string[] src in alresult)
                         {
-                            keyword = src[0];
-                            jid = src[2];
                             JObject obj = JObject.Parse(src[1]);
-                            pagehtml = obj["results"][0]["content"].Value<string>();
-                            //System.IO.File.WriteAllText(@"D:\source\newresults\340\" + kw + "_" + i + "_" + jid + ".html", pagehtml, Encoding.UTF8);
+                            string pagehtml = obj["results"][0]["content"].Value<string>();
+                            jobid = src[2];
+                            device = src[3];
+
+                            //System.IO.File.WriteAllText(@"D:\source\newresults\340\" + kw + "_" + i + "_" + jobid + ".html", pagehtml, Encoding.UTF8);
 
                             if (pagehtml.Contains("Sorry, no results were found for"))
                             {
                                 goto REPEAT;
                             }
-                            html += obj["results"][0]["content"].Value<string>();
-                            jobid = src[2];
-                            device = src[3];
+
+                            html += pagehtml;
                         }
                     }
                     catch (Exception ex)
@@ -87,6 +84,7 @@ namespace UniversalTracking
                         string error = ex.Message.ToString();
                     }
                 }
+
                 ArrayList addURLs = PriceSearcherPattern(html).Result;
                 foreach (string str in addURLs)
                 {
@@ -136,8 +134,8 @@ namespace UniversalTracking
                 }
                 foreach (string s in alDup)
                 {
-                    if (top100PriceSearcherUK.Contains(s) || string.IsNullOrEmpty(s))  continue;
-                        top100PriceSearcherUK.Add(s);
+                    if (top100PriceSearcherUK.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    top100PriceSearcherUK.Add(s);
                 }
                 if (top100PriceSearcherUK.Count > 100)
                 {
@@ -149,7 +147,6 @@ namespace UniversalTracking
             return await Task.FromResult<ArrayList>(top100PriceSearcherUK);
         }
 
-       
         async Task<ArrayList> GetOxylabsWebDataSources(string ul, string type)
         {
             Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries");//io/v1/stats
@@ -203,7 +200,7 @@ namespace UniversalTracking
             }
 
             JObject jo = JObject.Parse(response);
-            var links = from p in jo["query"] select p;
+            var links = from p in jo["_links"] select p;
             ArrayList lst = new ArrayList();
             //foreach (JToken link in links)
             //{

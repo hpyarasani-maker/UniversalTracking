@@ -81,23 +81,33 @@ namespace UniversalTracking
 
                 foreach (string s in lstKWs.Items)
                 {
-                    string seid = s.Split(':')[0];
-                    string kw = s.Split(':')[1];
-                    //ta = WOWS.getTop100YahooHK(seid, kw);
-                    ta = WOWS.getTop100YahooJapan(seid, kw);
-                    //ta = WOWS.GetTop100Sogou(seid, kw);
-                    //ta = WOWS.getTop100SmCnMobile(seid, kw);
-                    //ta = WOWS.GetTop100HaoSou360(seid, kw);
-                    //ta = WOWS.GetTop100SmCnMobile(seid,kw);
-                    //ta = WOWS.GetTop100Sogou(seid, kw);
-                    //ta = WOWS.GetBaidu(seid, kw);
-                    //ta = WOWS.GetTop100Naver(seid, kw);
-                    //ta = WOWS.GetTop100PriceSearcher(seid, kw);
-
-                    
-                    if (ta.Result.Count >= 0)
+                    try
                     {
-                        sendtoAPI(ta, seid, kw);
+                        string seid = s.Split(':')[0];
+                        string kw = s.Split(':')[1];
+                        //ta = WOWS.getTop100YahooHK(seid, kw);
+                        ta = WOWS.getTop100YahooJapan(seid, kw);
+                        //ta = WOWS.GetTop100Sogou(seid, kw);
+                        //ta = WOWS.getTop100SmCnMobile(seid, kw);
+                        //ta = WOWS.GetTop100HaoSou360(seid, kw);
+                        //ta = WOWS.GetTop100SmCnMobile(seid,kw);
+                        //ta = WOWS.GetTop100Sogou(seid, kw);
+                        //ta = WOWS.GetBaidu(seid, kw);
+                        //ta = WOWS.GetTop100Naver(seid, kw);
+                        //ta = WOWS.GetTop100PriceSearcher(seid, kw);
+
+
+                        if (ta.Result.Count >= 0)
+                        {
+                            sendtoAPI(ta, seid, kw);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke((MethodInvoker)delegate ()
+                        {
+                            errorList.Items.Add("Error: " + ex.Message);
+                        });
                     }
                 }
                 noResult = 0;

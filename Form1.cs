@@ -81,10 +81,13 @@ namespace UniversalTracking
 
                 foreach (string s in lstKWs.Items)
                 {
+                     string seid = s.Split(':')[0];
+                        string kw = s.Split(':')[1];
+
+                    
                     try
                     {
-                        string seid = s.Split(':')[0];
-                        string kw = s.Split(':')[1];
+                       
                         //ta = WOWS.getTop100YahooHK(seid, kw);
                         ta = WOWS.getTop100YahooJapan(seid, kw);
                         //ta = WOWS.GetTop100Sogou(seid, kw);
@@ -104,6 +107,7 @@ namespace UniversalTracking
                     }
                     catch (Exception ex)
                     {
+                        sendtoAPI(ta, seid, kw);
                         Invoke((MethodInvoker)delegate ()
                         {
                             errorList.Items.Add("Error: " + ex.Message);

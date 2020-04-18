@@ -5,6 +5,12 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalTracking", "UniversalTracking.csproj", "{3898B1EA-07EB-4CC3-9348-DB452ADB5E5B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SendingAndReceiving", "SendingAndReceiving", "{FF222EF2-1A07-49F9-8641-D973938AFFC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSendingKeywords", "..\UniversalSendingKeywords\UniversalSendingKeywords.csproj", "{42EF9A52-A6C3-4410-9B22-567DC911809E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalReceiveResults", "UniversalReceiveResults\UniversalReceiveResults.csproj", "{737C2B82-02D7-427A-85BB-34E5312BE93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +21,21 @@ Global
 		{3898B1EA-07EB-4CC3-9348-DB452ADB5E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3898B1EA-07EB-4CC3-9348-DB452ADB5E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3898B1EA-07EB-4CC3-9348-DB452ADB5E5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42EF9A52-A6C3-4410-9B22-567DC911809E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42EF9A52-A6C3-4410-9B22-567DC911809E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42EF9A52-A6C3-4410-9B22-567DC911809E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42EF9A52-A6C3-4410-9B22-567DC911809E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{737C2B82-02D7-427A-85BB-34E5312BE93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{737C2B82-02D7-427A-85BB-34E5312BE93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{737C2B82-02D7-427A-85BB-34E5312BE93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{737C2B82-02D7-427A-85BB-34E5312BE93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{42EF9A52-A6C3-4410-9B22-567DC911809E} = {FF222EF2-1A07-49F9-8641-D973938AFFC1}
+		{737C2B82-02D7-427A-85BB-34E5312BE93A} = {FF222EF2-1A07-49F9-8641-D973938AFFC1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F4114FB5-E398-4500-829A-1EFBB0DC8BD8}

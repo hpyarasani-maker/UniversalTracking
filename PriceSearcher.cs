@@ -48,8 +48,8 @@ namespace UniversalTracking
                 for (int i = 1; i <= 5; i++)
                 {
                     //https://www.pricesearcher.com/gb/search/?p=1&q=dvd
-                    ul = "https://www.pricesearcher.com/gb/search/?p=" + i + "&q="+ kw +"&st=OR";
-                    //ul = "https://www.pricesearcher.com/gb/?p=" + i + "&q=" + kw + "";
+                    //ul = "https://www.pricesearcher.com/gb/search/?p=" + i + "&q="+ kw +"&st=OR";
+                    ul = "https://www.pricesearcher.com/gb/?p=" + i + "&q=" + kw + "";
 
                     REPEAT:
 

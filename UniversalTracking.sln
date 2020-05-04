@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalReceiveResults", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSendingKeywords", "UniversalSendingKeywords\UniversalSendingKeywords.csproj", "{0AA0F438-D108-4E64-9DC2-F02659430C18}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResultsAPI", "ResultsAPI", "{D1368A0C-1F7D-4F01-83D8-BD130C7892C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sending", "Sending\Sending.csproj", "{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,10 @@ Global
 		{0AA0F438-D108-4E64-9DC2-F02659430C18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AA0F438-D108-4E64-9DC2-F02659430C18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AA0F438-D108-4E64-9DC2-F02659430C18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{737C2B82-02D7-427A-85BB-34E5312BE93A} = {FF222EF2-1A07-49F9-8641-D973938AFFC1}
 		{0AA0F438-D108-4E64-9DC2-F02659430C18} = {FF222EF2-1A07-49F9-8641-D973938AFFC1}
+		{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307} = {D1368A0C-1F7D-4F01-83D8-BD130C7892C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F4114FB5-E398-4500-829A-1EFBB0DC8BD8}

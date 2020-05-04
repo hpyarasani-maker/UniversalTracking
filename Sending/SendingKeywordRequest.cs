@@ -76,7 +76,7 @@ namespace Sending
             }
         }
 
-        private void StoreResultsAPI(int seid, string[] keyword,string response)
+        private void StoreResultsAPI(int seid, string kwd,string response) //04-05-2020
         {
             string date = DateTime.Today.ToString("yyyy-MM-dd");
             StringBuilder sb = new StringBuilder();
@@ -91,10 +91,9 @@ namespace Sending
                 string kw = link["query"].Value<string>();
                 string jobid = link["id"].Value<string>();
                 string api = link["_links"][1]["href"].Value<string>();
-                
-             
-                string qry = "insert into OxyResultsAPI (date,seid,keyword,page,api) values(Convert(varchar(10),'" + date + "',103)," + seid + ", N'" + keyword[0].Replace("'", "''") + "', " + pages + ", '" + api + "')";
-                
+
+                string qry = "insert into OxyResultsAPI (date,seid,keyword,page,api) values(Convert(varchar(10),'" + date + "',103)," + seid + ", N'" + kwd.Replace("'", "''") + "', " + pages + ", '" + api + "')";  //04-05-2020
+
                 sb.Append(qry);
 
             }
@@ -119,7 +118,7 @@ namespace Sending
             }
         }
 
-        private void GetOxylabsWebDataSources(string[] arr, string type, int seid)
+        private void GetOxylabsWebDataSources(string[] arr, string type, int seid,string kw) //04-05-2020
         {
             Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries/batch");
             string username = "gpidatametrics";
@@ -176,10 +175,11 @@ namespace Sending
                 res.Close();
 
                 //SendToDb(seid, response);
-                
-                    StoreResultsAPI(seid, keyword, response);
-                
-                
+
+                StoreResultsAPI(seid, kw, response); //04-05-2020
+
+
+
             }
             catch (WebException ex)
             {
@@ -202,7 +202,6 @@ namespace Sending
 
         string[] urlbatch;
         char ch = ',';
-        string urls = "";
         public void getTop100(string keyword, int seid)
         {
             try
@@ -211,6 +210,8 @@ namespace Sending
                 string type = "";
                 for (int j = 0; j < kwdsarray.Length; j++)
                 {
+                    string urls = "";
+
                     string kw = kwdsarray[j].ToString();
                     switch (seid)
                     {
@@ -348,11 +349,11 @@ namespace Sending
                                     break;
                             }
                     }
-                    urls = urls.Remove(urls.Length - 1);
+                    //urls = urls.Remove(urls.Length - 1);
                     urls = HttpUtility.UrlDecode(urls);
                     //urlbatch = new[] { urls };
                     urlbatch = urls.Split(',');
-                    GetOxylabsWebDataSources(urlbatch, type, seid);
+                    GetOxylabsWebDataSources(urlbatch, type, seid,kw); //04-05-2020
                 }
                 //urls = urls.Remove(urls.Length - 1);
                 //urls = HttpUtility.UrlDecode(urls);
@@ -364,34 +365,7 @@ namespace Sending
                 throw ex;
             }
         }
-        //public string[] GetURLBatch(string kw, string type)
-        //{
-        //    char ch = ',';
-        //    string urls = "";
-        //    if (type == "desktop")
-        //    {
-        //        for (int i = 1; i <= 2; i++)
-        //        {
-        //            int st = (50 * i) + 1;
-        //            urls += "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&b=" + st + "&pz=100" + ch;
-
-        //        }
-        //    }
-        //    if (type == "mobile")
-        //    {
-        //        for (int i = 0; i < 2; i++)
-        //        {
-        //            int st = (50 * i) + 1;
-        //            urls += "https://hk.search.yahoo.com/search?p=" + kw + "&ei=UTF-8&.tsrc=yfp-hrmob-sb&b=" + st + "&pz=100" + ch;
-
-        //        }
-        //    }
-
-        //    urls = urls.Remove(urls.Length - 1);
-        //    urls = HttpUtility.UrlDecode(urls);
-        //    return new[] { urls };
-
-        //}
+        
 
     }
 }

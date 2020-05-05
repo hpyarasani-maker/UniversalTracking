@@ -41,7 +41,7 @@ namespace Receiving
             string jobid = "";
             for (int i = 0; i < al.Count; i++)
             {
-                jobid = al[i].ToString().Replace("http://data.oxylabs.io/v1/queries/", "").Replace("/results", "");
+                //jobid = al[i].ToString().Replace("http://data.oxylabs.io/v1/queries/", "").Replace("/results", "");
                 resultsurl = al[i].ToString();
                 
 

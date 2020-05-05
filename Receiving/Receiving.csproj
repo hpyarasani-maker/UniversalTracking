@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EF91CAD6-97DA-4DFE-8C5C-A0DAC906C307}</ProjectGuid>
+    <ProjectGuid>{07C54007-75B8-4943-9FEB-A487E3A97F75}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Sending</RootNamespace>
-    <AssemblyName>Sending</AssemblyName>
+    <RootNamespace>Receiving</RootNamespace>
+    <AssemblyName>Receiving</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -60,10 +60,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="OxyParams.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SendingKeywordRequest.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

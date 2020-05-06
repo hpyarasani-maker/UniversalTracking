@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,31 +18,16 @@ namespace Receiving
 {
     public partial class Form1 : Form
     {
-
-        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-        private int noResult;
-        //YahooClass WOWS = new YahooClass();
-        //Baidu WOWS = new Baidu();
-        //Sogou WOWS = new Sogou();
-        //SmCnMobile_278 WOWS = new SmCnMobile_278();
-        //YahooJapan WOWS = new YahooJapan();
-        //YahooHK WOWS = new YahooHK();
-        //HaoSou360 WOWS = new HaoSou360();
-        //SmCnMobile_278 WOWS = new SmCnMobile_278();
-        //Sogou WOWS = new Sogou();
-        //Naver WOWS = new Naver();
-        //PriceSearcher WOWS = new PriceSearcher();
         HTMLParserNewTask WOWS = new HTMLParserNewTask();
-
-
-        //int count; 
+        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+        int noResult;
 
         public Form1()
         {
             InitializeComponent();
-            //count = 0;   // Common.GetOxylabsCount();          
-            timerExit();
+            noResult = 0;
         }
+
         void timerExit()
         {
             timer.Interval = 30 * 60000;
@@ -59,8 +42,7 @@ namespace Receiving
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //this.Text = "YahooHK_256_6_WC_70_Universal";
-            this.Text = "Sogou_277_WC_50_Universal";//changes
+            this.Text = "Sogou_276_Universal_Receiving";//changes
 
             Thread t = new Thread(new ThreadStart(StartProcess));
             t.SetApartmentState(ApartmentState.STA);
@@ -68,75 +50,97 @@ namespace Receiving
             noResult = 0;
 
         }
+
         string seid = "";
         string kw = "";
         ArrayList al = new ArrayList();
         string resultsurl = "";
+
         public void StartProcess()
         {
             Task<ArrayList> ta = null;
             while (true)
             {
                 string myDate = DateTime.Today.ToString("yyyy-MM-dd");
-                string kwQry = "[GetOxyResultsApi]";
-                
+                //string kwQry = "[GetOxyResultsApi]";
+                string kwQry = "exec [dbo].[GetOxyResultsApi] '" + myDate + "'";
+
+
                 GetKeywords(kwQry);
                 if (lstKWs.Items.Count <= 0)
                     Environment.Exit(Environment.ExitCode);
                 string html = "";
                 int count = 0;
+
                 foreach (string s in lstKWs.Items)
                 {
-                    seid = s.Split(':')[0];
-                    kw = s.Split(':')[1];                  
-                    
-                        count++;                       
-                    
-                    if (count<=10)
+                    seid = s.Split('|')[0];
+                    kw = s.Split('|')[1];
+                    count++;
+
+                    if (count <= 10)
                     {
-                        resultsurl = "http:" + s.Split(':')[3];
+                        resultsurl = s.Split('|')[2];
                         al.Add(resultsurl);
-                        if (al.Count==10)
+                        if (al.Count == 10)
                         {
                             html = WOWS.Gethtml(Convert.ToInt32(seid), kw, al);
-                            System.IO.File.WriteAllText(@"c:\inetpub\wwwroot\html\" + kw + ".html", html, Encoding.UTF8);
-                            ta = WOWS.getTop100SogouMobilePattern(html);
-                            if (ta.Result.Count >= 0)
+                            //System.IO.File.WriteAllText(@"c:\inetpub\wwwroot\html\" + kw + ".html", html, Encoding.UTF8);
+                            try
+                            {
+
+                                // ta = WOWS.getTop100YahooHKDesktopPattern(html);              // 38
+                                //ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
+                                //ta = WOWS.getTop100NaverDesktopPattern(html);                 // 138
+                                //ta = WOWS.getTop100HaoSou360DesktopPattern(html);             // 175
+                                //ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
+                                //ta = WOWS.getTop100PriceSearcherPattern(html);                // 340 
+
+
+                                // ta = WOWS.getTop100HaoSou360MobilePattern(html);               // 193        
+                                //ta = WOWS.getTop100YahooJapanMobilePattern(html);              // 194
+                                //ta = WOWS.getTop100YahooHKMobilePattern(html);                 // 256
+                                ta = WOWS.getTop100SogouMobilePattern(html);                   // 277
+                                //ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
+                                //ta = WOWS.getTop100NaverMobilePattern(html);                   // 440 
+
+
+                                if (ta.Result.Count >= 0)
+                                {
+                                    sendtoAPI(ta, seid, kw);
+                                    count = 0;
+                                    ta = null;
+                                    al.Clear();
+                                    html = "";
+                                }
+                            }
+                            catch (Exception ex)
                             {
                                 sendtoAPI(ta, seid, kw);
-                                count = 0;
-                                ta= null;
+                                Invoke((MethodInvoker)delegate ()
+                                {
+                                    errorList.Items.Add("Error: " + ex.Message);
+                                });
                             }
                         }
-                       
-
-                        
-                        noResult = 0;
-                    }       
-                    
+                    }
                 }
-               
+                noResult = 0;
             }
         }
-
         private void GetKeywords(string qry)
         {
             this.Invoke((MethodInvoker)delegate ()
             {
                 lstKWs.Items.Clear();
                 //lstKWs.Items.Add("277:organic search");          
-                //lstKWs.Items.Add("138:2금융권대출");
-                //lstKWs.Items.Add("175:seo multiple domains");
-                //lstKWs.Items.Add("38:ipad");
-                //lstKWs.Items.Add("340:smartview2");
-
             });
             //return;
 
             try
             {
-               
-                using (SqlConnection con = new SqlConnection(ReadConnection()))
+
+                using (SqlConnection con = new SqlConnection(Common.ReadConnection()))
                 {
                     con.Open();
                     using (SqlCommand comm = new SqlCommand(qry, con))
@@ -148,18 +152,13 @@ namespace Receiving
                             {
                                 this.Invoke((MethodInvoker)delegate ()
                                 {
-                                    //lstKWs.Items.Add(dr[0].ToString() + ":" + dr[1].ToString() + ":" + dr[2].ToString());
-                                    lstKWs.Items.Add(dr[0].ToString());
-
+                                    //lstKWs.Items.Add(dr[0].ToString());
+                                    lstKWs.Items.Add(dr[0].ToString() + "|" + dr[1].ToString() + "|" + dr[2].ToString());
                                 });
                             }
                         }
                     }
                 }
-                //this.Invoke((MethodInvoker)delegate ()
-                //{
-                //    lstKWs.Refresh();
-                //});
             }
             catch (Exception ex)
             {
@@ -171,96 +170,26 @@ namespace Receiving
             finally { }
         }
 
-        
-        public string ReadAPI()
-        {
-            try
-            {
-                XmlDocument xml = new XmlDocument();
-                string fileName = @"C:\Inetpub\wwwroot\Callback_TrackingTrending.xml";
-
-                // You'll need to put the correct path to your xml file here
-                xml.Load(fileName);
-
-                // Select a specific node
-                XmlNode node = xml.SelectSingleNode("ConnectionString/apiSubmit");
-
-                // Get its value
-                string name = node.InnerText;
-
-                return name;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
-
-        private void SendToDB(string seid, string keyword, string xml, string jobid, int urlcount)
-        {
-            try
-            {
-                string myDate = DateTime.Today.ToString("yyyy-MM-dd");
-                using (SqlConnection con = new SqlConnection(ReadConnection()))
-                {
-                    con.Open();
-
-                    using (SqlCommand comm = con.CreateCommand())
-                    {
-                        comm.CommandTimeout = 0;
-                        comm.CommandType = CommandType.StoredProcedure;
-                        comm.CommandText = "Insert_dashboard_data";
-                        comm.Parameters.Add("Date", SqlDbType.DateTime).Value = myDate;
-                        comm.Parameters.Add("Name", SqlDbType.NVarChar).Value = keyword; //.Replace("'", "''");
-                        comm.Parameters.Add("Seid", SqlDbType.Int).Value = seid;
-                        comm.Parameters.Add("JobId", SqlDbType.NVarChar).Value = jobid;
-                        comm.Parameters.Add("Count", SqlDbType.Int).Value = urlcount;
-                        comm.Parameters.Add("XmlData", SqlDbType.Xml).Value = xml.Replace("'", "''");
-
-                        comm.ExecuteNonQuery();
-                    }
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                string errorMessage = "Database Error: \r\n";
-                for (int i = 0; i < ex.Errors.Count; i++)
-                {
-                    errorMessage += "Index #" + i + "\n" +
-                                     "Message: " + ex.Errors[i].Message + "\n" +
-                                     "LineNumber: " + ex.Errors[i].LineNumber + "\n" +
-                                     "Source: " + ex.Errors[i].Source + "\n" +
-                                     "Procedure: " + ex.Errors[i].Procedure + "\n" +
-                                     "Server: " + ex.Errors[i].Server + "\n";
-                }
-
-                throw new Exception(errorMessage);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
 
         public void sendtoAPI(Task<ArrayList> ta, string seid, string kn)
         {
+            const string path = @"C:\Inetpub\wwwroot\276_1_Universal_Receive.xml";//changes
 
-            //const string path = @"C:\Inetpub\wwwroot\data_256_6_GT70_Universal.xml";
-            const string path = @"C:\Inetpub\wwwroot\YahooJapanMobile_194_6_WC_50_Universal.xml";//changes
-
+            int a = 0;
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             ArrayList seresults = ta.Result;
             if (seresults.Count < 1)
             {
+                a = lstKWs.Items.Count / 10;
                 noResult++;
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     results.Text = "no results";
+
                     label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+
+                    //label1.Text = "completed " + noResult.ToString() + " of " + a;
+
                     results.Refresh();
                 }));
 
@@ -292,11 +221,13 @@ namespace Receiving
             }
             else if (seresults[0].ToString().Contains("e100") && seresults[0].ToString().Trim().StartsWith("e100"))
             {
+                //int a1 = lstKWs.Items.Count/10;
                 noResult++;
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     results.Text = "e100: no results";
                     label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+                    //label1.Text = "completed " + noResult.ToString() + " of " + a1;
                     results.Refresh();
                 }));
 
@@ -309,7 +240,8 @@ namespace Receiving
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     lblCount.Text = "No. of Urls : " + seresults.Count;
-                    label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+                    //label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+                    label1.Text = "completed " + noResult.ToString() + " of " + a;
                     results.Text = seid + " " + kn;
                 }));
 
@@ -348,8 +280,10 @@ namespace Receiving
                         writer.WriteEndAttribute();
 
                         string dURL = seresults[i].ToString();
-                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+
+                        //qry += "insert into [dashboard_data4_ResultApi](date,name,seid,rank,url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -368,11 +302,11 @@ namespace Receiving
                     if (seresults.Count > 50)
                     {
                         sendDatatoURL(path);
-                        string strInsert = "insert into dashboard_data(date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";
+                        string strInsert = "insert into [dashboard_data](date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";
                         SqlConnection objCon = null;
                         try
                         {
-                            objCon = new SqlConnection(strConn());
+                            objCon = new SqlConnection(Common.ReadConnection());
                             objCon.Open();
 
                             SqlCommand objCmd = new SqlCommand();
@@ -385,9 +319,9 @@ namespace Receiving
                             objCmd.CommandText = qry;
                             objCmd.ExecuteNonQuery();
                         }
-                        catch (SqlException e)
+                        catch (SqlException ex)
                         {
-                            string errMsg = "Database Connection is temporarily not working\n" + e.ToString();
+                            string errMsg = "Database Connection is temporarily not working\n" + ex.ToString();
                             //MessageBox.Show(errMsg);
                             errorList.Invoke((MethodInvoker)(delegate ()
                             {
@@ -414,7 +348,7 @@ namespace Receiving
 
         void sendDatatoURL(string xmlPath)
         {
-            string submitURL = readAPI();
+            string submitURL = Common.readAPI();
 
             string user = "pisoftware";
             string pwd = "r00t123456";
@@ -504,6 +438,7 @@ namespace Receiving
                 }));
             }
         }
+
         private string GetTextFromXMLFile(string file)
         {
             StreamReader reader = new StreamReader(file);
@@ -511,32 +446,7 @@ namespace Receiving
             reader.Close();
             return ret;
         }
-        public string readAPI()
-        {
-            XmlDocument xml = new XmlDocument();
-            string fileName = @"C:\Inetpub\wwwroot\ServerIP1.xml";
-            //string fileName = @"C:\Inetpub\wwwroot\ServerIP_Callback.xml";
-            // You'll need to put the correct path to your xml file here
-            xml.Load(fileName);
-            // Select a specific node
-            XmlNode node = xml.SelectSingleNode("ConnectionString/apiNew");
-            // Get its value
-            string name = node.InnerText;
-            return name;
-        }
-        public string strConn()
-        {
-            XmlDocument xml = new XmlDocument();
-            string fileName = @"C:\Inetpub\wwwroot\ServerIP1.xml";
-            // You'll need to put the correct path to your xml file here
-            xml.Load(fileName);
 
-            // Select a specific node
-            XmlNode node = xml.SelectSingleNode("ConnectionString/con");
-            // Get its value
-            string name = node.InnerText;
-            return name;
-        }
         void InsertDashBoardData(string ddate, string kwd, string seid, string url)
         {
             string strInsert = "insert into dashboard_data(date,name,seid,url)values(Convert(varchar(10),'" + ddate + "',103),N'" + kwd.Replace("'", "''") + "'," + seid + ",N'" + url.Replace("'", "''") + "')";
@@ -544,7 +454,7 @@ namespace Receiving
             SqlDataReader objData = null;
             try
             {
-                objCon = new SqlConnection(strConn());
+                objCon = new SqlConnection(Common.strConn());
                 objCon.Open();
                 SqlCommand objCmd = new SqlCommand(strInsert, objCon);
                 objCmd.CommandTimeout = 0;
@@ -573,28 +483,6 @@ namespace Receiving
                 objCon.Close();
             }
         }
-        internal static string ReadConnection()
-        {
-            try
-            {
-                XmlDocument xml = new XmlDocument();
-                string fileName = @"C:\Inetpub\wwwroot\Callback_TrackingTrending.xml";
 
-                // You'll need to put the correct path to your xml file here
-                xml.Load(fileName);
-
-                // Select a specific node
-                XmlNode node = xml.SelectSingleNode("ConnectionString/con");
-
-                // Get its value
-                string name = node.InnerText;
-
-                return name;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
     }
 }

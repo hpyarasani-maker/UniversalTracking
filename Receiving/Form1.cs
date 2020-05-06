@@ -240,8 +240,8 @@ namespace Receiving
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     lblCount.Text = "No. of Urls : " + seresults.Count;
-                    //label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
-                    label1.Text = "completed " + noResult.ToString() + " of " + a;
+                    label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+                    //label1.Text = "completed " + noResult.ToString() + " of " + a;
                     results.Text = seid + " " + kn;
                 }));
 

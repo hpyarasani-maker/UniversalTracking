@@ -94,7 +94,7 @@ namespace Receiving
             {
                 string error = ex.Message.ToString();
             }
-
+            
             return html;
         }
 
@@ -103,9 +103,10 @@ namespace Receiving
             string qry = "insert into dashboard_dataerrors (date, name, seid, jobid) values(Convert(varchar(10),'" + myDate + "',103), N'" +
                 kw.Replace("'", "''") + "', " + seid + ", '" + jobid + "' )";
 
-            using (SqlConnection con = new SqlConnection(Common.strConn()))
+            using (SqlConnection con = new SqlConnection(ReadConnection()))
             {
                 try
+
                 {
                     con.Open();
                     using (SqlCommand comm = new SqlCommand(qry, con))
@@ -133,6 +134,30 @@ namespace Receiving
                 {
                     throw ex;
                 }
+            }
+        }
+
+        internal static string ReadConnection()
+        {
+            try
+            {
+                XmlDocument xml = new XmlDocument();
+                string fileName = @"C:\Inetpub\wwwroot\Callback_TrackingTrending.xml";
+
+                // You'll need to put the correct path to your xml file here
+                xml.Load(fileName);
+
+                // Select a specific node
+                XmlNode node = xml.SelectSingleNode("ConnectionString/con");
+
+                // Get its value
+                string name = node.InnerText;
+
+                return name;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 

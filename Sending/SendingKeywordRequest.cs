@@ -50,7 +50,7 @@ namespace Sending
             {
                 string kw = link["query"].Value<string>();
                 string jobid = link["id"].Value<string>();
-
+                
                 string qry = "insert into dashboard_data_sending (date, name, seid, jobid) values(Convert(varchar(10),'" + date + "',103), N'" + kw.Replace("'", "''") + "', " + seid + ", '" + jobid + "'); ";
                 sb.Append(qry);
             }
@@ -76,7 +76,7 @@ namespace Sending
             }
         }
 
-        private void StoreResultsAPI(int seid, string kwd, string response) //04-05-2020
+        private void StoreResultsAPI(int seid, string kwd,string response) //04-05-2020
         {
             string date = DateTime.Today.ToString("yyyy-MM-dd");
             StringBuilder sb = new StringBuilder();
@@ -84,7 +84,7 @@ namespace Sending
             JObject jo = JObject.Parse(response);
             var links = from p in jo["queries"] select p;
             int pages = 0;
-
+            
             foreach (JToken link in links)
             {
                 pages++;
@@ -118,7 +118,7 @@ namespace Sending
             }
         }
 
-        private void GetOxylabsWebDataSources(string[] arr, string type, int seid, string kw) //04-05-2020
+        private void GetOxylabsWebDataSources(string[] arr, string type, int seid,string kw) //04-05-2020
         {
             Uri queryUri = new Uri("https://data.oxylabs.io/v1/queries/batch");
             string username = "gpidatametrics";
@@ -127,7 +127,7 @@ namespace Sending
 
             string callbackURL = "http://previous.azurewebsites.net/api/callbackrapidtrackingmobile/";
 
-            string[] keyword = arr;
+            string[] keyword = arr ;
 
             OxyParams op = new OxyParams()
             {
@@ -255,7 +255,7 @@ namespace Sending
                                     int n = (i * 10) + 1;
                                     urls += "http://web.search.naver.com/search.naver?where=webkr&query=" + HttpUtility.UrlEncode(HttpUtility.HtmlDecode(kw)) + "&start=" + n + "&display=10&ie=utf8" + ch;
                                 }
-                                break;
+                                    break;
                             }
                         case 175:
                             {
@@ -265,7 +265,7 @@ namespace Sending
                                     urls += "https://www.so.com/s?ie=utf-8&shb=1&src=360sou_newhome&q=" + kw + "&pn=" + i + ch;
                                 }
 
-                                break;
+                                    break;
                             }
                         case 193:
                             {
@@ -275,7 +275,7 @@ namespace Sending
                                     urls += "https://m.so.com/nextpage?q= " + kw + " &pn=" + i + "&ajax=1" + ch;
                                 }
 
-                                break;
+                                    break;
                             }
                         case 194:
                             {
@@ -346,14 +346,14 @@ namespace Sending
 
                                     urls += "https://m.search.naver.com/search.naver?where=m&sm=mtb_pge&query=" + HttpUtility.UrlEncode(HttpUtility.HtmlDecode(kw)) + "&start=" + n + "&page=" + (i + 2) + "&display=15" + ch;
                                 }
-                                break;
+                                    break;
                             }
                     }
-                    urls = urls.Remove(urls.Length - 1);
+                    //urls = urls.Remove(urls.Length - 1);
                     urls = HttpUtility.UrlDecode(urls);
                     //urlbatch = new[] { urls };
                     urlbatch = urls.Split(',');
-                    GetOxylabsWebDataSources(urlbatch, type, seid, kw); //04-05-2020
+                    GetOxylabsWebDataSources(urlbatch, type, seid,kw); //04-05-2020
                 }
                 //urls = urls.Remove(urls.Length - 1);
                 //urls = HttpUtility.UrlDecode(urls);
@@ -365,6 +365,8 @@ namespace Sending
                 throw ex;
             }
         }
+        
+
     }
 }
 

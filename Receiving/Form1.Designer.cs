@@ -37,44 +37,44 @@
             // 
             // errorList
             // 
-            this.errorList.Location = new System.Drawing.Point(382, 292);
+            this.errorList.Location = new System.Drawing.Point(411, 289);
             this.errorList.Name = "errorList";
-            this.errorList.Size = new System.Drawing.Size(510, 238);
-            this.errorList.TabIndex = 20;
+            this.errorList.Size = new System.Drawing.Size(510, 277);
+            this.errorList.TabIndex = 30;
             // 
             // lblCount
             // 
             this.lblCount.AutoSize = true;
-            this.lblCount.Location = new System.Drawing.Point(792, 79);
+            this.lblCount.Location = new System.Drawing.Point(829, 42);
             this.lblCount.Name = "lblCount";
             this.lblCount.Size = new System.Drawing.Size(14, 13);
-            this.lblCount.TabIndex = 19;
+            this.lblCount.TabIndex = 29;
             this.lblCount.Text = "#";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(379, 79);
+            this.label1.Location = new System.Drawing.Point(419, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(14, 13);
-            this.label1.TabIndex = 18;
+            this.label1.TabIndex = 28;
             this.label1.Text = "#";
             // 
             // results
             // 
-            this.results.Location = new System.Drawing.Point(382, 104);
+            this.results.Location = new System.Drawing.Point(411, 67);
             this.results.Multiline = true;
             this.results.Name = "results";
-            this.results.Size = new System.Drawing.Size(510, 108);
-            this.results.TabIndex = 17;
+            this.results.Size = new System.Drawing.Size(510, 133);
+            this.results.TabIndex = 27;
             // 
             // lstKWs
             // 
             this.lstKWs.FormattingEnabled = true;
-            this.lstKWs.Location = new System.Drawing.Point(57, 68);
+            this.lstKWs.Location = new System.Drawing.Point(28, 42);
             this.lstKWs.Name = "lstKWs";
-            this.lstKWs.Size = new System.Drawing.Size(310, 472);
-            this.lstKWs.TabIndex = 16;
+            this.lstKWs.Size = new System.Drawing.Size(364, 524);
+            this.lstKWs.TabIndex = 26;
             // 
             // Form1
             // 

@@ -325,28 +325,108 @@ namespace Receiving
 
         public async Task<ArrayList> getTop100SogouDesktopPattern(string html)
         {
-            ArrayList sogouDesktop = new ArrayList();
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
+            ArrayList top100sogouDesktop = new ArrayList();
+            ArrayList alDup = new ArrayList();
 
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='fb']/a");
-
-            foreach (var links in hn)
+            try
             {
-                try
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+
+                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='fb']/a");
+
+                foreach (var links in hn)
                 {
-                    //HtmlNode a = links.SelectSingleNode(".//a");
-                    string urls = links.Attributes["href"].Value;
-                    urls = HttpUtility.UrlDecode(urls);
-                    if (urls.StartsWith("http") || urls.StartsWith("https"))
+                    try
                     {
-                        if (urls.Contains("http://snapshot.sogoucdn.com/websnapshot"))
+                        //HtmlNode a = links.SelectSingleNode(".//a");
+                        string urls = links.Attributes["href"].Value;
+                        urls = HttpUtility.UrlDecode(urls);
+                        if (urls.StartsWith("http") || urls.StartsWith("https"))
                         {
-                            Regex r = new Regex("&url=(.*)&did=", RegexOptions.IgnoreCase);
-                            Match m1 = r.Match(urls);
-                            if (m1.Success)
-                                urls = HttpUtility.UrlDecode(m1.Groups[1].Value);
+                            if (urls.Contains("http://snapshot.sogoucdn.com/websnapshot"))
+                            {
+                                Regex r = new Regex("&url=(.*)&did=", RegexOptions.IgnoreCase);
+                                Match m1 = r.Match(urls);
+                                if (m1.Success)
+                                    urls = HttpUtility.UrlDecode(m1.Groups[1].Value);
+                            }
+                            if (urls.LastIndexOf("http://") > 0)
+                            {
+                                urls = urls.Remove(0, urls.LastIndexOf("http://"));
+                            }
+                            else if (urls.LastIndexOf("https://") > 0)
+                            {
+                                urls = urls.Remove(0, urls.LastIndexOf("https://"));
+                            }
+
+                            if (!urls.Contains("www.sogou.com"))
+                                alDup.Add(HttpUtility.HtmlDecode(urls));
+                        }
+                    }
+                    catch { continue; }
+                }
+                foreach (string s in alDup) //07-05-2020
+                {
+                    if (top100sogouDesktop.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    top100sogouDesktop.Add(s);
+                }
+
+                if (top100sogouDesktop.Count > 100) //07-05-2020
+                {
+                    top100sogouDesktop.RemoveRange(100, top100sogouDesktop.Count - 100);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("No pattern match,  " + ex.Message);
+            }
+
+            return await Task.FromResult<ArrayList>(top100sogouDesktop);
+        }
+
+        public async Task<ArrayList> getTop100SogouMobilePattern(string html)
+        {
+            ArrayList top100sogouMobile = new ArrayList();
+            ArrayList alDup = new ArrayList();
+
+            try
+            {
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+
+                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='resultLink  ']|.//a[@class='resultLink']|.//a[@class='resultLink ellipsis']|.//a[@class='resultLink clamp2']");
+
+                Regex r1 = null;
+                Match m2 = null;
+
+                foreach (var links in hn)
+                {
+                    try
+                    {
+
+                        string urls = links.Attributes["href"].Value;
+                        urls = HttpUtility.UrlDecode(urls);
+
+                        if (urls.Contains("&url") || urls.Contains("&url=") || urls.Contains("url="))
+                        {
+
+                            Regex r = new Regex("url=(.*)&amp;dp=1&amp;", RegexOptions.IgnoreCase);
+                            if (r == null)
+                            {
+                                r1 = new Regex("url=(.*)&vrid=", RegexOptions.IgnoreCase);//&amp;vrid=   &vrid= &amp;vrid=
+                                m2 = r1.Match(urls);
+                                if (m2.Success)
+                                    urls = HttpUtility.UrlDecode(m2.Groups[1].Value);
+                            }
+                            if (r != null)
+                            {
+                                Match m1 = r.Match(urls);
+                                if (m1.Success)
+                                    urls = HttpUtility.UrlDecode(m1.Groups[1].Value);
+                            }
                         }
                         if (urls.LastIndexOf("http://") > 0)
                         {
@@ -356,131 +436,101 @@ namespace Receiving
                         {
                             urls = urls.Remove(0, urls.LastIndexOf("https://"));
                         }
+                        if (!urls.Contains("tv.sogou.com"))
 
-                        if (!urls.Contains("www.sogou.com"))
-                            sogouDesktop.Add(HttpUtility.HtmlDecode(urls));
+                            if (urls.Contains("&vrid=") && urls.Contains("&wml"))
+                            {
+                                int index = urls.IndexOf("&vrid");
+                                urls = urls.Remove(index);
+                            }
+                        if (urls.StartsWith("http") || urls.StartsWith("https"))
+                        {
+                            if (urls.Contains("&amp;vrid") && urls.Contains("&amp;wml"))
+                            {
+                                int index = urls.IndexOf("&amp;vrid");
+                                urls = urls.Remove(index);
+                            }
+                            alDup.Add(HttpUtility.HtmlDecode(urls));
+                        }
+
                     }
+                    catch { continue; }
                 }
-                catch { continue; }
-            }
-            return await Task.FromResult<ArrayList>(sogouDesktop); ;
-        }
-
-        public async Task<ArrayList> getTop100SogouMobilePattern(string html)
-        {
-            ArrayList sogouMobile = new ArrayList();
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='resultLink  ']|.//a[@class='resultLink']|.//a[@class='resultLink ellipsis']|.//a[@class='resultLink clamp2']");
-
-            Regex r1 = null;
-            Match m2 = null;
-
-            foreach (var links in hn)
-            {
-                try
+                foreach (string s in alDup) //07-05-2020
                 {
-
-                    string urls = links.Attributes["href"].Value;
-                    urls = HttpUtility.UrlDecode(urls);
-
-                    if (urls.Contains("&url") || urls.Contains("&url=") || urls.Contains("url="))
-                    {
-
-                        Regex r = new Regex("url=(.*)&amp;dp=1&amp;", RegexOptions.IgnoreCase);
-                        if (r == null)
-                        {
-                            r1 = new Regex("url=(.*)&vrid=", RegexOptions.IgnoreCase);//&amp;vrid=   &vrid= &amp;vrid=
-                            m2 = r1.Match(urls);
-                            if (m2.Success)
-                                urls = HttpUtility.UrlDecode(m2.Groups[1].Value);
-                        }
-                        if (r != null)
-                        {
-                            Match m1 = r.Match(urls);
-                            if (m1.Success)
-                                urls = HttpUtility.UrlDecode(m1.Groups[1].Value);
-                        }
-                    }
-                    if (urls.LastIndexOf("http://") > 0)
-                    {
-                        urls = urls.Remove(0, urls.LastIndexOf("http://"));
-                    }
-                    else if (urls.LastIndexOf("https://") > 0)
-                    {
-                        urls = urls.Remove(0, urls.LastIndexOf("https://"));
-                    }
-                    if (!urls.Contains("tv.sogou.com"))
-
-                        if (urls.Contains("&vrid=") && urls.Contains("&wml"))
-                        {
-                            int index = urls.IndexOf("&vrid");
-                            urls = urls.Remove(index);
-                        }
-                    if (urls.StartsWith("http") || urls.StartsWith("https"))
-                    {
-                        if (urls.Contains("&amp;vrid") && urls.Contains("&amp;wml"))
-                        {
-                            int index = urls.IndexOf("&amp;vrid");
-                            urls = urls.Remove(index);
-                        }
-                        sogouMobile.Add(HttpUtility.HtmlDecode(urls));
-                    }
-
+                    if (top100sogouMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    top100sogouMobile.Add(s);
                 }
-                catch { continue; }
+
+                if (top100sogouMobile.Count > 100) //07-05-2020
+                {
+                    top100sogouMobile.RemoveRange(100, top100sogouMobile.Count - 100);
+                }
             }
-            return await Task.FromResult<ArrayList>(sogouMobile);
+            catch (Exception ex)
+            {
+                throw new Exception("No pattern match,  " + ex.Message);
+            }
+            return await Task.FromResult<ArrayList>(top100sogouMobile);
         }
 
         public async Task<ArrayList> getTop100SmCnMobilePattern(string html)
         {
-            ArrayList SmcnMobile = new ArrayList();
+            ArrayList top100SmcnMobile = new ArrayList();
             ArrayList alDup = new ArrayList();
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='c-header-inner c-flex-1']|.//div[@class='c-nature--v1_0_0']|.//div[@class='c-source--v1_0_0 c-source-l c-margin-top-s']");
 
-            foreach (var links in hn)
+            try
             {
-                try
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//a[@class='c-header-inner c-flex-1']|.//div[@class='c-nature--v1_0_0']|.//div[@class='c-source--v1_0_0 c-source-l c-margin-top-s']");
+
+                foreach (var links in hn)
                 {
-                    //HtmlNode a = links.SelectSingleNode(".//a");
-                    string urls = links.Attributes["href"].Value.Trim();
-                    urls = HttpUtility.UrlDecode(urls);
-                    if (urls.StartsWith("http") || urls.StartsWith("https"))
+                    try
                     {
-                        int indx = urls.LastIndexOf("http://");
-                        if (indx < 0)
+                        //HtmlNode a = links.SelectSingleNode(".//a");
+                        string urls = links.Attributes["href"].Value.Trim();
+                        urls = HttpUtility.UrlDecode(urls);
+                        if (urls.StartsWith("http") || urls.StartsWith("https"))
                         {
-                            indx = urls.LastIndexOf("https://");
+                            int indx = urls.LastIndexOf("http://");
+                            if (indx < 0)
+                            {
+                                indx = urls.LastIndexOf("https://");
+                            }
+                            alDup.Add(HttpUtility.HtmlDecode(urls));
                         }
-                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
-                    foreach (string s in alDup)
-                    {
-                        if (SmcnMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
-                        if (s.Contains("mparticle") || s.Contains("zm.sm-tc.cn")) continue;
-                        SmcnMobile.Add(s);
-                    }
-                    if (SmcnMobile.Count > 100)
-                    {
-                        SmcnMobile.RemoveRange(100, SmcnMobile.Count - 100);
-                    }
+                    catch { continue; }
                 }
-                catch { continue; }
+                foreach (string s in alDup)   //07-05-2020
+                {
+                    if (top100SmcnMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    if (s.Contains("mparticle") || s.Contains("zm.sm-tc.cn")) continue;
+                    top100SmcnMobile.Add(s);
+                }
+                if (top100SmcnMobile.Count > 100)  //07-05-2020
+                {
+                    top100SmcnMobile.RemoveRange(100, top100SmcnMobile.Count - 100);
+                }
             }
-            return await Task.FromResult<ArrayList>(SmcnMobile); ;
+            catch (Exception ex)
+            {
+                throw new Exception("No pattern match,  " + ex.Message);
+
+            }
+
+            return await Task.FromResult<ArrayList>(top100SmcnMobile); ;
         }
 
         public async Task<ArrayList> getTop100RamblerDesktopPattern(string html)
         {
             ArrayList top100Rambler = new ArrayList();
             ArrayList alDup = new ArrayList();
+
+
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);

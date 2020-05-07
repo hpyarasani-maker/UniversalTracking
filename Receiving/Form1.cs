@@ -93,14 +93,14 @@ namespace Receiving
                                 //ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
                                 //ta = WOWS.getTop100NaverDesktopPattern(html);                 // 138
                                 //ta = WOWS.getTop100HaoSou360DesktopPattern(html);             // 175
-                                //ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
+                                ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
                                 //ta = WOWS.getTop100PriceSearcherPattern(html);                // 340 
 
 
                                 // ta = WOWS.getTop100HaoSou360MobilePattern(html);               // 193        
                                 //ta = WOWS.getTop100YahooJapanMobilePattern(html);              // 194
                                 //ta = WOWS.getTop100YahooHKMobilePattern(html);                 // 256
-                                ta = WOWS.getTop100SogouMobilePattern(html);                   // 277
+                                //ta = WOWS.getTop100SogouMobilePattern(html);                   // 277
                                 //ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
                                 //ta = WOWS.getTop100NaverMobilePattern(html);                   // 440 
 

@@ -63,13 +63,22 @@ namespace Receiving
                                 foreach (JObject jo in cont)
                                 {
                                     ArrayList addURLs = new ArrayList();
-                                    html += jo["content"].Value<string>();
+                                    //07-05-2020
+                                    string src = jo["content"].Value<string>();
+                                    if (string.IsNullOrEmpty(src.Trim()))
+                                    {
+                                        throw new Exception("Html source is empty.");
+                                    }
+                                    html += src;
+                                    //end 07-05-2020
+
                                     //System.IO.File.WriteAllText(@"c:\inetpub\wwwroot\html\" + kw + ".html", response, Encoding.UTF8);
                                 }
                             }
                             catch (Exception ex)
                             {
-                                string error = ex.Message.ToString();
+                                html = "";
+                                throw ex; //07-05-2020
                             }
 
                         }

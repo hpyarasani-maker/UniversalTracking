@@ -222,105 +222,133 @@ namespace Receiving
 
         public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html)
         {
-            ArrayList yahoojapan = new ArrayList();
-            ArrayList aldup = new ArrayList();
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section sw-Card__section--header']/div/div/a[1]");
+            ArrayList top100YahooJapan = new ArrayList();
+            ArrayList alDup = new ArrayList();
 
             try
             {
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section sw-Card__section--header']/div/div/a[1]");
+
                 foreach (var links in hn)
                 {
-                    string urls = links.Attributes[0].Value;
-                    urls = HttpUtility.UrlDecode(urls);
-                    if (urls.StartsWith("http") || urls.StartsWith("https"))
+                    try
                     {
-                        int indx = urls.LastIndexOf("http://");
-                        if (indx < 0)
+                        string urls = links.Attributes[0].Value;
+                        urls = HttpUtility.UrlDecode(urls);
+                        if (urls.StartsWith("http") || urls.StartsWith("https"))
                         {
-                            indx = urls.LastIndexOf("https://");
-                        }
-                        urls = urls.Remove(0, indx);
+                            int indx = urls.LastIndexOf("http://");
+                            if (indx < 0)
+                            {
+                                indx = urls.LastIndexOf("https://");
+                            }
+                            urls = urls.Remove(0, indx);
 
-                        //urls = urls.Remove(indx, length);
-                        //al.Add(HttpUtility.HtmlDecode(urls));
-                        aldup.Add(HttpUtility.HtmlDecode(urls));
+                            //urls = urls.Remove(indx, length);
+                            //al.Add(HttpUtility.HtmlDecode(urls));
+                            alDup.Add(HttpUtility.HtmlDecode(urls));
+                        }
                     }
+                    catch { continue; }
                 }
-                foreach (string s in aldup)
+                foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
-                    if (yahoojapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
+                    if (top100YahooJapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
+                    if (top100YahooJapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
                     if (s1.Contains("search.yahoo.co.jp") || s1.Contains("news.yahoo.co.jp") || s1.Contains("topics.shopping") || s1.Contains("paypayfleamarket.yahoo.co.jp") || s1.Contains("app.adjust.com")) continue;
-                    yahoojapan.Add(s1);
+                    top100YahooJapan.Add(s1);
                 }
-                if (yahoojapan.Count > 100)
+                if (top100YahooJapan.Count > 100)
                 {
-                    yahoojapan.RemoveRange(100, yahoojapan.Count - 100);
+                    top100YahooJapan.RemoveRange(100, top100YahooJapan.Count - 100);
                 }
             }
-            catch (Exception ex) { throw ex; }
-
-
-            return await Task.FromResult<ArrayList>(yahoojapan);
+            catch (Exception ex)
+            {
+                throw new Exception("No pattern match" + ex.Message);
+            }
+            return await Task.FromResult<ArrayList>(top100YahooJapan); ;
         }
+
         public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html)
         {
-            ArrayList yahoojapan = new ArrayList();
-            ArrayList aldup = new ArrayList();
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);//sw-Card__section
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section']/a");
+            ArrayList top100YahooJapanMobile = new ArrayList();
+            ArrayList alDup = new ArrayList();
 
             try
             {
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section']/a");
+
                 foreach (var links in hn)
                 {
-                    //string urls = links.Attributes[0].Value;
-                    string urls = links.Attributes["href"].Value;
-                    urls = HttpUtility.UrlDecode(urls);
-
-                    ///amp/s/amp.olhardigital.com.br/dicas_e_tutoriais/noticia/como-ativar-o-modo-escuro-do-iphone/90652%3Fusqp%3Dmq331AQQKAGYAb37k5Gc1bbAKbABIA%253D%253D
-                    if (urls.StartsWith("http") || urls.StartsWith("https") || urls.StartsWith("/amp/s/"))
+                    try
                     {
-                        if (urls.StartsWith("/amp/s/"))
+                        //string urls = links.Attributes[0].Value;
+                        string urls = links.Attributes["href"].Value;
+                        urls = HttpUtility.UrlDecode(urls);
+                        ///amp/s/amp.olhardigital.com.br/dicas_e_tutoriais/noticia/como-ativar-o-modo-escuro-do-iphone/90652%3Fusqp%3Dmq331AQQKAGYAb37k5Gc1bbAKbABIA%253D%253D
+                        if (urls.StartsWith("http") || urls.StartsWith("https") || urls.StartsWith("/amp/s/"))
                         {
-                            urls = urls.Replace("/amp/s/", "https://");
-                        }
+                            if (urls.StartsWith("/amp/s/"))
+                            {
+                                urls = urls.Replace("/amp/s/", "https://");
+                            }
 
-                        int indx = urls.LastIndexOf("http://");
-                        if (indx < 0)
-                        {
-                            indx = urls.LastIndexOf("https://");
+                            int indx = urls.LastIndexOf("http://");
+                            if (indx < 0)
+                            {
+                                indx = urls.LastIndexOf("https://");
+                            }
+                            urls = urls.Remove(0, indx);
+                            //urls = urls.Remove(indx, length);
+                            //al.Add(HttpUtility.HtmlDecode(urls));
+                            alDup.Add(HttpUtility.HtmlDecode(urls));
                         }
-                        urls = urls.Remove(0, indx);
-                        //urls = urls.Remove(indx, length);
-                        //al.Add(HttpUtility.HtmlDecode(urls));
-                        aldup.Add(HttpUtility.HtmlDecode(urls));
                     }
+                    catch { continue; }
                 }
-                foreach (string s in aldup)
+                foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
-                    if (yahoojapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
-                    if (s1.Contains("search.yahoo.co.jp") || s1.Contains("news.yahoo.co.jp") || s1.Contains("topics.shopping") || s1.Contains("paypayfleamarket.yahoo.co.jp") || s1.Contains("app.adjust.com")) continue;
-                    yahoojapan.Add(s1);
+                    if (top100YahooJapanMobile.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
+                    if (s1.Contains("shopping.yahoo.co.jp/search?rkf=2")
+                        || s1.Contains("auctions.yahoo.co.jp/search/search?rkf=2")
+                        || s1.Contains("news.yahoo.co.jp/search/?rkf=2")
+                        || s1.Contains("topics.shopping")
+                        || s1.Contains("paypayfleamarket.yahoo.co.jp/search/")
+                        || s1.Contains("app.adjust.com")
+                        || s1.Contains("chiebukuro.yahoo.co.jp/search/?rkf=1")
+                        || s1.Contains("search.yahoo.co.jp/video/search?rkf=2")
+                        || s1.Contains("search.yahoo.co.jp/image/search?rkf=2")
+                        || s1.Contains("loco.yahoo.co.jp/search/?ei=utf-8&rkf=2")
+                        || s1.Contains("zozo.jp/search/?p_keyv=")
+                        || s1.Contains("rd.listing.yahoo.co.jp/o/search/GU=")
+                        || s1.Contains("isi.edu.pa/maps/place/")
+                        || s1.Contains("www.ombudsman.gov.ua/ua/all-news")
+                        || s1.Contains("www.navitime.co.jp/taxi/result/?")
+                        || s1.Contains("www.ezimport.co.jp/search.php?id=")
+                        || s1.Contains("www.facebook.com/yasuhiko.tsuchida.coboking/posts/")) continue;
+                    top100YahooJapanMobile.Add(s1);
                 }
-                if (yahoojapan.Count > 100)
+                if (top100YahooJapanMobile.Count > 100)
                 {
-                    yahoojapan.RemoveRange(100, yahoojapan.Count - 100);
+                    top100YahooJapanMobile.RemoveRange(100, top100YahooJapanMobile.Count - 100);
                 }
-
             }
-            catch (Exception ex) { }
-
-            return await Task.FromResult<ArrayList>(yahoojapan);
+            catch (Exception ex)
+            {
+                throw new Exception("No pattern match" + ex.Message);
+            }
+            return await Task.FromResult<ArrayList>(top100YahooJapanMobile); ;
         }
 
         public async Task<ArrayList> getTop100SogouDesktopPattern(string html)
@@ -380,7 +408,7 @@ namespace Receiving
             }
             catch (Exception ex)
             {
-                throw new Exception("No pattern match,  " + ex.Message);
+                throw new Exception("No pattern match" + ex.Message);
             }
 
             return await Task.FromResult<ArrayList>(top100sogouDesktop);
@@ -469,7 +497,7 @@ namespace Receiving
             }
             catch (Exception ex)
             {
-                throw new Exception("No pattern match,  " + ex.Message);
+                throw new Exception("No pattern match" + ex.Message);
             }
             return await Task.FromResult<ArrayList>(top100sogouMobile);
         }
@@ -518,7 +546,7 @@ namespace Receiving
             }
             catch (Exception ex)
             {
-                throw new Exception("No pattern match,  " + ex.Message);
+                throw new Exception("No pattern match" + ex.Message);
 
             }
 

@@ -79,6 +79,8 @@ namespace Sending
         private void StoreResultsAPI(int seid, string kwd, string response) //04-05-2020
         {
             string date = DateTime.Today.ToString("yyyy-MM-dd");
+            //string date = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+
             StringBuilder sb = new StringBuilder();
 
             JObject jo = JObject.Parse(response);

@@ -42,7 +42,11 @@ namespace Receiving
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "Sogou_276_Universal_Receiving";//changes
+            //this.Text = "Sogou_277_Universal_Receiving_1";//changes
+            //this.Text = "Universal_Receiving_276_GT0_P";//changes
+            this.Text = "Universal_Receiving_48_GT0";//changes
+
+
 
             Thread t = new Thread(new ThreadStart(StartProcess));
             t.SetApartmentState(ApartmentState.STA);
@@ -62,7 +66,7 @@ namespace Receiving
             while (true)
             {
                 string myDate = DateTime.Today.ToString("yyyy-MM-dd");
-                //string kwQry = "[GetOxyResultsApi]";
+
                 string kwQry = "exec [dbo].[GetOxyResultsApi] '" + myDate + "'";
 
 
@@ -90,10 +94,10 @@ namespace Receiving
                             {
 
                                 // ta = WOWS.getTop100YahooHKDesktopPattern(html);              // 38
-                                //ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
+                                ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
                                 //ta = WOWS.getTop100NaverDesktopPattern(html);                 // 138
                                 //ta = WOWS.getTop100HaoSou360DesktopPattern(html);             // 175
-                                ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
+                                //ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
                                 //ta = WOWS.getTop100PriceSearcherPattern(html);                // 340 
 
 
@@ -173,22 +177,19 @@ namespace Receiving
 
         public void sendtoAPI(Task<ArrayList> ta, string seid, string kn)
         {
-            const string path = @"C:\Inetpub\wwwroot\276_1_Universal_Receive.xml";//changes
+            const string path = @"C:\Inetpub\wwwroot\48_Universal_Receive_1_GT0.xml";//changes
 
-            int a = 0;
-            string myDate = DateTime.Today.ToString("yyyy-MM-dd");
+            //string myDate = DateTime.Today.ToString("yyyy-MM-dd");
+            string myDate = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+
             ArrayList seresults = ta.Result;
             if (seresults.Count < 1)
             {
-                a = lstKWs.Items.Count / 10;
                 noResult++;
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     results.Text = "no results";
-
-                    label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
-
-                    //label1.Text = "completed " + noResult.ToString() + " of " + a;
+                    label1.Text = "completed " + noResult.ToString() + " of " + (lstKWs.Items.Count)/(10);
 
                     results.Refresh();
                 }));
@@ -226,7 +227,7 @@ namespace Receiving
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     results.Text = "e100: no results";
-                    label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
+                    label1.Text = "completed " + noResult.ToString() + " of " + (lstKWs.Items.Count)/(10);
                     //label1.Text = "completed " + noResult.ToString() + " of " + a1;
                     results.Refresh();
                 }));
@@ -240,11 +241,9 @@ namespace Receiving
                 results.Invoke((MethodInvoker)(delegate ()
                 {
                     lblCount.Text = "No. of Urls : " + seresults.Count;
-                    label1.Text = "completed " + noResult.ToString() + " of " + lstKWs.Items.Count;
-                    //label1.Text = "completed " + noResult.ToString() + " of " + a;
+                    label1.Text = "completed " + noResult.ToString() + " of " + (lstKWs.Items.Count)/(10);
                     results.Text = seid + " " + kn;
                 }));
-
 
 
                 XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
@@ -282,8 +281,8 @@ namespace Receiving
                         string dURL = seresults[i].ToString();
 
                         //qry += "insert into [dashboard_data4_ResultApi](date,name,seid,rank,url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -299,7 +298,7 @@ namespace Receiving
                 writer.Close();
                 if (myDate != string.Empty)
                 {
-                    if (seresults.Count > 50)
+                    if (seresults.Count > 0)
                     {
                         sendDatatoURL(path);
                         string strInsert = "insert into [dashboard_data](date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";

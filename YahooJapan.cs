@@ -179,7 +179,7 @@ namespace UniversalTracking
         public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html)
         {
             ArrayList yahoojapan = new ArrayList();
-            ArrayList aldup = new ArrayList();
+            ArrayList alDup = new ArrayList();
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
@@ -202,15 +202,31 @@ namespace UniversalTracking
 
                         //urls = urls.Remove(indx, length);
                         //al.Add(HttpUtility.HtmlDecode(urls));
-                        aldup.Add(HttpUtility.HtmlDecode(urls));
+                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
                 }
-                foreach (string s in aldup)
+                foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
                     if (yahoojapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
-                    if (s1.Contains("search.yahoo.co.jp") || s1.Contains("news.yahoo.co.jp") || s1.Contains("topics.shopping") || s1.Contains("paypayfleamarket.yahoo.co.jp") || s1.Contains("app.adjust.com")) continue;
+                    if (s1.Contains("shopping.yahoo.co.jp/search?rkf=2")
+                        || s1.Contains("auctions.yahoo.co.jp/search/search?rkf=2")
+                        || s1.Contains("news.yahoo.co.jp/search/?rkf=2")
+                        || s1.Contains("topics.shopping")
+                        || s1.Contains("paypayfleamarket.yahoo.co.jp/search/")
+                        || s1.Contains("app.adjust.com")
+                        || s1.Contains("chiebukuro.yahoo.co.jp/search/?rkf=1")
+                        || s1.Contains("search.yahoo.co.jp/video/search?rkf=2")
+                        || s1.Contains("search.yahoo.co.jp/image/search?rkf=2")
+                        || s1.Contains("loco.yahoo.co.jp/search/?ei=utf-8&rkf=2")
+                        || s1.Contains("zozo.jp/search/?p_keyv=")
+                        || s1.Contains("rd.listing.yahoo.co.jp/o/search/GU=")
+                        || s1.Contains("isi.edu.pa/maps/place/")
+                        || s1.Contains("www.ombudsman.gov.ua/ua/all-news")
+                        || s1.Contains("www.navitime.co.jp/taxi/result/?")
+                        || s1.Contains("www.ezimport.co.jp/search.php?id=")
+                        || s1.Contains("www.facebook.com/yasuhiko.tsuchida.coboking/posts/")) continue;
                     yahoojapan.Add(s1);
                 }
                 if (yahoojapan.Count > 100)
@@ -220,13 +236,12 @@ namespace UniversalTracking
             }
             catch (Exception ex) { throw ex; }
 
-
             return await Task.FromResult<ArrayList>(yahoojapan);
         }
         public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html)
         {
             ArrayList yahoojapan = new ArrayList();
-            ArrayList aldup = new ArrayList();
+            ArrayList alDup = new ArrayList();
 
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc = new HtmlAgilityPack.HtmlDocument();
@@ -257,10 +272,10 @@ namespace UniversalTracking
                         urls = urls.Remove(0, indx);
                         //urls = urls.Remove(indx, length);
                         //al.Add(HttpUtility.HtmlDecode(urls));
-                        aldup.Add(HttpUtility.HtmlDecode(urls));
+                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
                 }
-                foreach (string s in aldup)
+                foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
@@ -274,7 +289,7 @@ namespace UniversalTracking
                 }
 
             }
-            catch (Exception ex) { }
+            catch (Exception ex) { throw ex; }
 
             return await Task.FromResult<ArrayList>(yahoojapan);
         }

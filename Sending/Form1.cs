@@ -24,7 +24,7 @@ namespace Sending
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "D_YahooHK_Sending";
+            Text = "D_YahooJapan_48_Sending_1";
 
             date_picker.Value = DateTime.Today; //.AddDays(-1);
 
@@ -79,7 +79,7 @@ namespace Sending
             this.Invoke((MethodInvoker)delegate ()
             {
                 worklist.Items.Clear();
-                //worklist.Items.Add("277:ipad");
+                //worklist.Items.Add("194:cpu");
                 worklist.Refresh();
                 date_picker.Format = DateTimePickerFormat.Custom;
                 date_picker.CustomFormat = "yyyy-MM-dd";
@@ -89,9 +89,11 @@ namespace Sending
 
             Cursor.Current = Cursors.WaitCursor;
             string myDate = date_picker.Text;
+            //string myDate = "2020-05-06"; 
+
 
             //string strQry = "exec [dbo].[Getkeywords_48] '" + myDate + "'";
-            string strQry = "exec [dbo].[GetTestKeywords_277] '" + myDate + "'";
+            string strQry = "exec [dbo].[GetTestKeywords_48] '" + myDate + "'";
 
             SqlConnection objCon = null;
             SqlDataReader objData = null;

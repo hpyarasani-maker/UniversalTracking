@@ -71,7 +71,6 @@ namespace Receiving
                                     }
                                     html += src;
                                     //end 07-05-2020
-
                                     //System.IO.File.WriteAllText(@"c:\inetpub\wwwroot\html\" + kw + ".html", response, Encoding.UTF8);
                                 }
                             }
@@ -229,7 +228,7 @@ namespace Receiving
             return await Task.FromResult<ArrayList>(al);
         }
 
-        public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html)
+        public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html) //2020-05-08
         {
             ArrayList top100YahooJapan = new ArrayList();
             ArrayList alDup = new ArrayList();
@@ -268,8 +267,23 @@ namespace Receiving
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
                     if (top100YahooJapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
-                    if (top100YahooJapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
-                    if (s1.Contains("search.yahoo.co.jp") || s1.Contains("news.yahoo.co.jp") || s1.Contains("topics.shopping") || s1.Contains("paypayfleamarket.yahoo.co.jp") || s1.Contains("app.adjust.com")) continue;
+                    if (s1.Contains("shopping.yahoo.co.jp/search?rkf=2")
+                        || s1.Contains("auctions.yahoo.co.jp/search/search?rkf=2")
+                        || s1.Contains("news.yahoo.co.jp/search/?rkf=2")
+                        || s1.Contains("topics.shopping")
+                        || s1.Contains("paypayfleamarket.yahoo.co.jp/search/")
+                        || s1.Contains("app.adjust.com")
+                        || s1.Contains("chiebukuro.yahoo.co.jp/search/?rkf=1")
+                        || s1.Contains("search.yahoo.co.jp/video/search?rkf=2")
+                        || s1.Contains("search.yahoo.co.jp/image/search?rkf=2")
+                        || s1.Contains("loco.yahoo.co.jp/search/?ei=utf-8&rkf=2")
+                        || s1.Contains("zozo.jp/search/?p_keyv=")
+                        || s1.Contains("rd.listing.yahoo.co.jp/o/search/GU=")
+                        || s1.Contains("isi.edu.pa/maps/place/")
+                        || s1.Contains("www.ombudsman.gov.ua/ua/all-news")
+                        || s1.Contains("www.navitime.co.jp/taxi/result/?")
+                        || s1.Contains("www.ezimport.co.jp/search.php?id=")
+                        || s1.Contains("www.facebook.com/yasuhiko.tsuchida.coboking/posts/")) continue;
                     top100YahooJapan.Add(s1);
                 }
                 if (top100YahooJapan.Count > 100)
@@ -284,7 +298,7 @@ namespace Receiving
             return await Task.FromResult<ArrayList>(top100YahooJapan); ;
         }
 
-        public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html)
+        public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html) //2020-05-08
         {
             ArrayList top100YahooJapanMobile = new ArrayList();
             ArrayList alDup = new ArrayList();

@@ -44,7 +44,7 @@ namespace Receiving
         {
             //this.Text = "Sogou_277_Universal_Receiving_1";//changes
             //this.Text = "Universal_Receiving_276_GT0_P";//changes
-            this.Text = "Universal_Receiving_48_GT0";//changes
+            this.Text = "Universal_Receiving_48_GT50";//changes
 
 
 
@@ -177,7 +177,7 @@ namespace Receiving
 
         public void sendtoAPI(Task<ArrayList> ta, string seid, string kn)
         {
-            const string path = @"C:\Inetpub\wwwroot\48_Universal_Receive_1_GT0.xml";//changes
+            const string path = @"C:\Inetpub\wwwroot\48_Universal_Receive_1_GT50.xml";//changes
 
             //string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             string myDate = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
@@ -298,7 +298,7 @@ namespace Receiving
                 writer.Close();
                 if (myDate != string.Empty)
                 {
-                    if (seresults.Count > 0)
+                    if (seresults.Count > 80)
                     {
                         sendDatatoURL(path);
                         string strInsert = "insert into [dashboard_data](date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";

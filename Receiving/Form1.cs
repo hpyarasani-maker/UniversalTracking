@@ -94,18 +94,18 @@ namespace Receiving
                             {
 
                                 // ta = WOWS.getTop100YahooHKDesktopPattern(html);              // 38
-                                ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
+                                //ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
                                 //ta = WOWS.getTop100NaverDesktopPattern(html);                 // 138
                                 //ta = WOWS.getTop100HaoSou360DesktopPattern(html);             // 175
-                                //ta = WOWS.getTop100SogouDesktopPattern(html);                   // 276
+                                //ta = WOWS.getTop100SogouDesktopPattern(html);                 // 276
                                 //ta = WOWS.getTop100PriceSearcherPattern(html);                // 340 
 
 
-                                // ta = WOWS.getTop100HaoSou360MobilePattern(html);               // 193        
+                                //ta = WOWS.getTop100HaoSou360MobilePattern(html);               // 193        
                                 //ta = WOWS.getTop100YahooJapanMobilePattern(html);              // 194
                                 //ta = WOWS.getTop100YahooHKMobilePattern(html);                 // 256
                                 //ta = WOWS.getTop100SogouMobilePattern(html);                   // 277
-                                //ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
+                                ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
                                 //ta = WOWS.getTop100NaverMobilePattern(html);                   // 440 
 
 
@@ -280,8 +280,8 @@ namespace Receiving
                         string dURL = seresults[i].ToString();
 
                         //qry += "insert into [dashboard_data4_ResultApi](date,name,seid,rank,url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -297,7 +297,7 @@ namespace Receiving
                 writer.Close();
                 if (myDate != string.Empty)
                 {
-                    if (seresults.Count > 0)
+                    if (seresults.Count > 50)
                     {
                         sendDatatoURL(path);
                         string strInsert = "insert into [dashboard_data](date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";

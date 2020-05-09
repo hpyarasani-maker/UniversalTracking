@@ -79,13 +79,13 @@ namespace Sending
             this.Invoke((MethodInvoker)delegate ()
             {
                 worklist.Items.Clear();
-                //worklist.Items.Add("194:cpu");
+                worklist.Items.Add("278:check the website ranking");
                 worklist.Refresh();
                 date_picker.Format = DateTimePickerFormat.Custom;
                 date_picker.CustomFormat = "yyyy-MM-dd";
             });
 
-            //return;
+            return;
 
             Cursor.Current = Cursors.WaitCursor;
             string myDate = date_picker.Text;
@@ -93,7 +93,7 @@ namespace Sending
 
 
             //string strQry = "exec [dbo].[Getkeywords_48] '" + myDate + "'";
-            string strQry = "exec [dbo].[GetTestKeywords_48] '" + myDate + "'";
+            string strQry = "exec [dbo].[GetTestKeywords_276] '" + myDate + "'";
 
             SqlConnection objCon = null;
             SqlDataReader objData = null;

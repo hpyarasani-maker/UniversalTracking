@@ -57,7 +57,6 @@ namespace Receiving
                             ArrayList arRes = new ArrayList();
                             try
                             {
-
                                 JObject obj = JObject.Parse(response);
                                 var cont = obj["results"];
                                 foreach (JObject jo in cont)
@@ -228,45 +227,41 @@ namespace Receiving
             return await Task.FromResult<ArrayList>(al);
         }
 
-        public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html) //2020-05-08
+
+        public async Task<ArrayList> getTop100YahooJapanDesktopPattern(string html)
         {
-            ArrayList top100YahooJapan = new ArrayList();
+            ArrayList yahoojapan = new ArrayList();
             ArrayList alDup = new ArrayList();
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section sw-Card__section--header']/div/div/a[1]");
 
             try
             {
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section sw-Card__section--header']/div/div/a[1]");
-
                 foreach (var links in hn)
                 {
-                    try
+                    string urls = links.Attributes[0].Value;
+                    urls = HttpUtility.UrlDecode(urls);
+                    if (urls.StartsWith("http") || urls.StartsWith("https"))
                     {
-                        string urls = links.Attributes[0].Value;
-                        urls = HttpUtility.UrlDecode(urls);
-                        if (urls.StartsWith("http") || urls.StartsWith("https"))
+                        int indx = urls.LastIndexOf("http://");
+                        if (indx < 0)
                         {
-                            int indx = urls.LastIndexOf("http://");
-                            if (indx < 0)
-                            {
-                                indx = urls.LastIndexOf("https://");
-                            }
-                            urls = urls.Remove(0, indx);
-
-                            //urls = urls.Remove(indx, length);
-                            //al.Add(HttpUtility.HtmlDecode(urls));
-                            alDup.Add(HttpUtility.HtmlDecode(urls));
+                            indx = urls.LastIndexOf("https://");
                         }
+                        urls = urls.Remove(0, indx);
+
+                        //urls = urls.Remove(indx, length);
+                        //al.Add(HttpUtility.HtmlDecode(urls));
+                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
-                    catch { continue; }
                 }
                 foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
-                    if (top100YahooJapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
+                    if (yahoojapan.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
                     if (s1.Contains("shopping.yahoo.co.jp/search?rkf=2")
                         || s1.Contains("auctions.yahoo.co.jp/search/search?rkf=2")
                         || s1.Contains("news.yahoo.co.jp/search/?rkf=2")
@@ -284,65 +279,63 @@ namespace Receiving
                         || s1.Contains("www.navitime.co.jp/taxi/result/?")
                         || s1.Contains("www.ezimport.co.jp/search.php?id=")
                         || s1.Contains("www.facebook.com/yasuhiko.tsuchida.coboking/posts/")) continue;
-                    top100YahooJapan.Add(s1);
+                    yahoojapan.Add(s1);
                 }
-                if (top100YahooJapan.Count > 100)
+                if (yahoojapan.Count > 100)
                 {
-                    top100YahooJapan.RemoveRange(100, top100YahooJapan.Count - 100);
+                    yahoojapan.RemoveRange(100, yahoojapan.Count - 100);
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("No pattern match" + ex.Message);
-            }
-            return await Task.FromResult<ArrayList>(top100YahooJapan); ;
+            catch (Exception ex) { }
+
+            return await Task.FromResult<ArrayList>(yahoojapan);
         }
 
-        public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html) //2020-05-08
+
+
+        public async Task<ArrayList> getTop100YahooJapanMobilePattern(string html)
         {
-            ArrayList top100YahooJapanMobile = new ArrayList();
+            ArrayList top100YahoojapanMobile = new ArrayList();
             ArrayList alDup = new ArrayList();
+
+
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);//sw-Card__section
+            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section']/a");
 
             try
             {
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//div[@class='sw-Card__section']/a");
-
                 foreach (var links in hn)
                 {
-                    try
-                    {
-                        //string urls = links.Attributes[0].Value;
-                        string urls = links.Attributes["href"].Value;
-                        urls = HttpUtility.UrlDecode(urls);
-                        ///amp/s/amp.olhardigital.com.br/dicas_e_tutoriais/noticia/como-ativar-o-modo-escuro-do-iphone/90652%3Fusqp%3Dmq331AQQKAGYAb37k5Gc1bbAKbABIA%253D%253D
-                        if (urls.StartsWith("http") || urls.StartsWith("https") || urls.StartsWith("/amp/s/"))
-                        {
-                            if (urls.StartsWith("/amp/s/"))
-                            {
-                                urls = urls.Replace("/amp/s/", "https://");
-                            }
+                    //string urls = links.Attributes[0].Value;
+                    string urls = links.Attributes["href"].Value;
+                    urls = HttpUtility.UrlDecode(urls);
 
-                            int indx = urls.LastIndexOf("http://");
-                            if (indx < 0)
-                            {
-                                indx = urls.LastIndexOf("https://");
-                            }
-                            urls = urls.Remove(0, indx);
-                            //urls = urls.Remove(indx, length);
-                            //al.Add(HttpUtility.HtmlDecode(urls));
-                            alDup.Add(HttpUtility.HtmlDecode(urls));
+                    ///amp/s/amp.olhardigital.com.br/dicas_e_tutoriais/noticia/como-ativar-o-modo-escuro-do-iphone/90652%3Fusqp%3Dmq331AQQKAGYAb37k5Gc1bbAKbABIA%253D%253D
+                    if (urls.StartsWith("http") || urls.StartsWith("https") || urls.StartsWith("/amp/s/"))
+                    {
+                        if (urls.StartsWith("/amp/s/"))
+                        {
+                            urls = urls.Replace("/amp/s/", "https://");
                         }
+
+                        int indx = urls.LastIndexOf("http://");
+                        if (indx < 0)
+                        {
+                            indx = urls.LastIndexOf("https://");
+                        }
+                        urls = urls.Remove(0, indx);
+                        //urls = urls.Remove(indx, length);
+                        //al.Add(HttpUtility.HtmlDecode(urls));
+                        alDup.Add(HttpUtility.HtmlDecode(urls));
                     }
-                    catch { continue; }
                 }
                 foreach (string s in alDup)
                 {
                     string s1 = s;
                     //s1 = s1.Remove(s1.Length - 1);
-                    if (top100YahooJapanMobile.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
+                    if (top100YahoojapanMobile.Contains(s1) || string.IsNullOrEmpty(s1)) continue;
                     if (s1.Contains("shopping.yahoo.co.jp/search?rkf=2")
                         || s1.Contains("auctions.yahoo.co.jp/search/search?rkf=2")
                         || s1.Contains("news.yahoo.co.jp/search/?rkf=2")
@@ -360,19 +353,20 @@ namespace Receiving
                         || s1.Contains("www.navitime.co.jp/taxi/result/?")
                         || s1.Contains("www.ezimport.co.jp/search.php?id=")
                         || s1.Contains("www.facebook.com/yasuhiko.tsuchida.coboking/posts/")) continue;
-                    top100YahooJapanMobile.Add(s1);
+                    top100YahoojapanMobile.Add(s1);
                 }
-                if (top100YahooJapanMobile.Count > 100)
+                if (top100YahoojapanMobile.Count > 100)
                 {
-                    top100YahooJapanMobile.RemoveRange(100, top100YahooJapanMobile.Count - 100);
+                    top100YahoojapanMobile.RemoveRange(100, top100YahoojapanMobile.Count - 100);
                 }
+
             }
-            catch (Exception ex)
-            {
-                throw new Exception("No pattern match" + ex.Message);
-            }
-            return await Task.FromResult<ArrayList>(top100YahooJapanMobile); ;
+            catch (Exception ex) { }
+
+            return await Task.FromResult<ArrayList>(top100YahoojapanMobile);
         }
+
+
 
         public async Task<ArrayList> getTop100SogouDesktopPattern(string html)
         {
@@ -418,13 +412,13 @@ namespace Receiving
                     }
                     catch { continue; }
                 }
-                foreach (string s in alDup) //07-05-2020
+                foreach (string s in alDup)
                 {
-                    if (top100sogouDesktop.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    if (top100sogouDesktop.Contains(s)) continue; //2020-05-09
                     top100sogouDesktop.Add(s);
                 }
 
-                if (top100sogouDesktop.Count > 100) //07-05-2020
+                if (top100sogouDesktop.Count > 100) 
                 {
                     top100sogouDesktop.RemoveRange(100, top100sogouDesktop.Count - 100);
                 }
@@ -507,13 +501,13 @@ namespace Receiving
                     }
                     catch { continue; }
                 }
-                foreach (string s in alDup) //07-05-2020
+                foreach (string s in alDup) 
                 {
-                    if (top100sogouMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    if (top100sogouMobile.Contains(s)) continue; //2020-05-09
                     top100sogouMobile.Add(s);
                 }
 
-                if (top100sogouMobile.Count > 100) //07-05-2020
+                if (top100sogouMobile.Count > 100) 
                 {
                     top100sogouMobile.RemoveRange(100, top100sogouMobile.Count - 100);
                 }
@@ -556,13 +550,13 @@ namespace Receiving
                     }
                     catch { continue; }
                 }
-                foreach (string s in alDup)   //07-05-2020
+                foreach (string s in alDup)   
                 {
-                    if (top100SmcnMobile.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    if (top100SmcnMobile.Contains(s)) continue; //2020-05-09
                     if (s.Contains("mparticle") || s.Contains("zm.sm-tc.cn")) continue;
                     top100SmcnMobile.Add(s);
                 }
-                if (top100SmcnMobile.Count > 100)  //07-05-2020
+                if (top100SmcnMobile.Count > 100)  
                 {
                     top100SmcnMobile.RemoveRange(100, top100SmcnMobile.Count - 100);
                 }
@@ -573,7 +567,7 @@ namespace Receiving
 
             }
 
-            return await Task.FromResult<ArrayList>(top100SmcnMobile); ;
+            return await Task.FromResult<ArrayList>(top100SmcnMobile); 
         }
 
         public async Task<ArrayList> getTop100RamblerDesktopPattern(string html)

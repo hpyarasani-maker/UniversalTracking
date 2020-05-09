@@ -143,7 +143,6 @@ namespace Sending
                 callback_url = callbackURL,
                 parse = false,
                 user_agent_type = type
-
             };
 
 

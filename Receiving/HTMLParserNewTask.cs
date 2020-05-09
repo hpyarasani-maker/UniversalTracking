@@ -66,7 +66,8 @@ namespace Receiving
                                     string src = jo["content"].Value<string>();
                                     if (string.IsNullOrEmpty(src.Trim()))
                                     {
-                                        throw new Exception("Html source is empty.");
+                                        //throw new Exception("Html source is empty.");
+                                        continue;
                                     }
                                     html += src;
                                     //end 07-05-2020
@@ -168,8 +169,6 @@ namespace Receiving
                         urls = urls.Remove(0, indx);
                         if (urls.Contains("/RK=2"))
                         {
-
-
                             indx = urls.LastIndexOf("/RK=2");
                             int length = urls.Length;
                             urls = urls.Remove(indx);
@@ -418,16 +417,13 @@ namespace Receiving
                     top100sogouDesktop.Add(s);
                 }
 
-                if (top100sogouDesktop.Count > 100) 
+                if (top100sogouDesktop.Count > 100)
                 {
                     top100sogouDesktop.RemoveRange(100, top100sogouDesktop.Count - 100);
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("No pattern match" + ex.Message);
-            }
-
+            catch { }
+            
             return await Task.FromResult<ArrayList>(top100sogouDesktop);
         }
 
@@ -501,21 +497,19 @@ namespace Receiving
                     }
                     catch { continue; }
                 }
-                foreach (string s in alDup) 
+                foreach (string s in alDup)
                 {
                     if (top100sogouMobile.Contains(s)) continue; //2020-05-09
                     top100sogouMobile.Add(s);
                 }
 
-                if (top100sogouMobile.Count > 100) 
+                if (top100sogouMobile.Count > 100)
                 {
                     top100sogouMobile.RemoveRange(100, top100sogouMobile.Count - 100);
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("No pattern match" + ex.Message);
-            }
+            catch { }
+
             return await Task.FromResult<ArrayList>(top100sogouMobile);
         }
 
@@ -550,24 +544,20 @@ namespace Receiving
                     }
                     catch { continue; }
                 }
-                foreach (string s in alDup)   
+                foreach (string s in alDup)
                 {
                     if (top100SmcnMobile.Contains(s)) continue; //2020-05-09
                     if (s.Contains("mparticle") || s.Contains("zm.sm-tc.cn")) continue;
                     top100SmcnMobile.Add(s);
                 }
-                if (top100SmcnMobile.Count > 100)  
+                if (top100SmcnMobile.Count > 100)
                 {
                     top100SmcnMobile.RemoveRange(100, top100SmcnMobile.Count - 100);
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception("No pattern match" + ex.Message);
-
-            }
-
-            return await Task.FromResult<ArrayList>(top100SmcnMobile); 
+            catch { }
+            
+            return await Task.FromResult<ArrayList>(top100SmcnMobile);
         }
 
         public async Task<ArrayList> getTop100RamblerDesktopPattern(string html)
@@ -654,7 +644,8 @@ namespace Receiving
                 }
                 foreach (string s in alDup)
                 {
-                    if (top100PriceSearcherUK.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    //if (top100PriceSearcherUK.Contains(s) || string.IsNullOrEmpty(s)) continue;
+                    if (top100PriceSearcherUK.Contains(s)) continue;
                     top100PriceSearcherUK.Add(s);
                 }
                 if (top100PriceSearcherUK.Count > 100)

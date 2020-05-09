@@ -332,7 +332,7 @@ namespace Sending
                         case 340:
                             {
                                 type = "desktop";
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 10; i++)
                                 {
                                     urls += "https://www.pricesearcher.com/gb/search/?p=" + i + "&q=" + kw + ch;
                                 }

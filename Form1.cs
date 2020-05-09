@@ -25,15 +25,15 @@ namespace UniversalTracking
         private int noResult;
         //YahooClass WOWS = new YahooClass();
         //Baidu WOWS = new Baidu();
-        //Sogou WOWS = new Sogou();
+        Sogou WOWS = new Sogou();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
-        YahooJapan WOWS = new YahooJapan();
+        //YahooJapan WOWS = new YahooJapan();
         //YahooHK WOWS = new YahooHK();
         //HaoSou360 WOWS = new HaoSou360();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //Sogou WOWS = new Sogou();
         //Naver WOWS = new Naver();
-      //PriceSearcher WOWS = new PriceSearcher();
+        //PriceSearcher WOWS = new PriceSearcher();
 
         //int count; 
 
@@ -87,14 +87,14 @@ namespace UniversalTracking
                     
                     try
                     {
-                       
+
                         //ta = WOWS.getTop100YahooHK(seid, kw);
-                        ta = WOWS.getTop100YahooJapan(seid, kw);
+                        //ta = WOWS.getTop100YahooJapan(seid, kw);
                         //ta = WOWS.GetTop100Sogou(seid, kw);
                         //ta = WOWS.getTop100SmCnMobile(seid, kw);
                         //ta = WOWS.GetTop100HaoSou360(seid, kw);
                         //ta = WOWS.GetTop100SmCnMobile(seid,kw);
-                        //ta = WOWS.GetTop100Sogou(seid, kw);
+                        ta = WOWS.GetTop100Sogou(seid, kw);
                         //ta = WOWS.GetBaidu(seid, kw);
                         //ta = WOWS.GetTop100Naver(seid, kw);
                         //ta = WOWS.GetTop100PriceSearcher(seid, kw);
@@ -128,9 +128,11 @@ namespace UniversalTracking
                 //lstKWs.Items.Add("175:seo multiple domains");
                 //lstKWs.Items.Add("38:ipad");
                 //lstKWs.Items.Add("340:smartview2");
+                lstKWs.Items.Add("276:backlinks checker tool");
+
 
             });
-           //return;
+           return;
 
             try
             {
@@ -351,8 +353,8 @@ namespace UniversalTracking
                         writer.WriteEndAttribute();
                        
                         string dURL = seresults[i].ToString();
-                        qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
-                        //qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        //qry += "insert into dashboard_japan(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
+                        qry += "insert into dashboard_data4(date, name, seid, rank, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Yandex(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_baidu(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
                         //qry += "insert into dashboard_Naver(date, name, seid, position, url) values(Convert(varchar(10), '" + myDate + "',103), N'" + kn.Replace("'", "''") + "', " + seid + ", " + k + ", N'" + dURL.ToString().Replace("'", "''") + "'); ";
@@ -368,7 +370,7 @@ namespace UniversalTracking
                 writer.Close();
                 if (myDate != string.Empty)
                 {
-                    if (seresults.Count > 50)
+                    if (seresults.Count > 20)
                     {
                         sendDatatoURL(path);
                         string strInsert = "insert into dashboard_data(date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";

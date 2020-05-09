@@ -43,8 +43,8 @@ namespace Receiving
         private void Form1_Load(object sender, EventArgs e)
         {
             //this.Text = "Sogou_277_Universal_Receiving_1";//changes
-            //this.Text = "Universal_Receiving_276_GT0_P";//changes
-            this.Text = "Universal_Receiving_48_GT0";//changes
+            this.Text = "Universal_Receiving_276_GT0";//changes
+            //this.Text = "Universal_Receiving_48_GT0";//changes
 
 
 
@@ -97,7 +97,7 @@ namespace Receiving
                                 //ta = WOWS.getTop100YahooJapanDesktopPattern(html);            // 48
                                 //ta = WOWS.getTop100NaverDesktopPattern(html);                 // 138
                                 //ta = WOWS.getTop100HaoSou360DesktopPattern(html);             // 175
-                                //ta = WOWS.getTop100SogouDesktopPattern(html);                 // 276
+                                ta = WOWS.getTop100SogouDesktopPattern(html);                 // 276
                                 //ta = WOWS.getTop100PriceSearcherPattern(html);                // 340 
 
 
@@ -105,7 +105,7 @@ namespace Receiving
                                 //ta = WOWS.getTop100YahooJapanMobilePattern(html);              // 194
                                 //ta = WOWS.getTop100YahooHKMobilePattern(html);                 // 256
                                 //ta = WOWS.getTop100SogouMobilePattern(html);                   // 277
-                                ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
+                                //ta = WOWS.getTop100SmCnMobilePattern(html);                    // 278
                                 //ta = WOWS.getTop100NaverMobilePattern(html);                   // 440 
 
 
@@ -177,7 +177,7 @@ namespace Receiving
 
         public void sendtoAPI(Task<ArrayList> ta, string seid, string kn)
         {
-            const string path = @"C:\Inetpub\wwwroot\48_Universal_Receive_1_GT0.xml";//changes
+            const string path = @"C:\Inetpub\wwwroot\276_Universal_Receive_GT0.xml";//changes
 
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
 
@@ -297,7 +297,7 @@ namespace Receiving
                 writer.Close();
                 if (myDate != string.Empty)
                 {
-                    if (seresults.Count > 50)
+                    if (seresults.Count > 0)
                     {
                         sendDatatoURL(path);
                         string strInsert = "insert into [dashboard_data](date,name,seid,url,count)values(Convert(varchar(10),'" + myDate + "',103),N'" + kn.Replace("'", "''") + "'," + seid + ",N'" + seresults[0].ToString().Replace("'", "''") + "','" + seresults.Count.ToString() + "')";

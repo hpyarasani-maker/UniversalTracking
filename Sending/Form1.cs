@@ -24,7 +24,7 @@ namespace Sending
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Text = "D_YahooJapan_48_Sending_1";
+            Text = "D_SmCnMobile_278_Sending";
 
             date_picker.Value = DateTime.Today; //.AddDays(-1);
 
@@ -79,7 +79,7 @@ namespace Sending
             this.Invoke((MethodInvoker)delegate ()
             {
                 worklist.Items.Clear();
-                worklist.Items.Add("278:check the website ranking");
+                worklist.Items.Add("340:galaxy 3 tablet");
                 worklist.Refresh();
                 date_picker.Format = DateTimePickerFormat.Custom;
                 date_picker.CustomFormat = "yyyy-MM-dd";
@@ -93,7 +93,7 @@ namespace Sending
 
 
             //string strQry = "exec [dbo].[Getkeywords_48] '" + myDate + "'";
-            string strQry = "exec [dbo].[GetTestKeywords_276] '" + myDate + "'";
+            string strQry = "exec [dbo].[GetTestKeywords_278] '" + myDate + "'";
 
             SqlConnection objCon = null;
             SqlDataReader objData = null;

@@ -47,7 +47,8 @@ namespace UniversalTracking
                 int i = 1;
                 //for (int i = 1; i <= 10; i++)
                 //{
-                ul = "http://nova.rambler.ru/search?pagelen=100&query=" + kw + "&page=" + i;
+                //ul = "http://nova.rambler.ru/search?pagelen=100&query=" + kw + "&page=" + i;
+                ul = "http://nova.rambler.ru/search?pagelen=100&query=" + kw;
 
                 REPEAT:
 
@@ -66,7 +67,7 @@ namespace UniversalTracking
                         string pagehtml = obj["results"][0]["content"].Value<string>();
                         jobid = src[2];
                         device = src[3];
-
+                        //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\html\" + jobid + "_" + kw + ".html", html, Encoding.UTF8);
                         //System.IO.File.WriteAllText(@"D:\source\newresults\" + kw + "_" + i + "_" + jobid + ".html", pagehtml, Encoding.UTF8);
 
                         if (pagehtml.Contains("Sorry, no results were found for"))
@@ -75,6 +76,8 @@ namespace UniversalTracking
                         }
 
                         html += pagehtml;
+                        //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\html\" + jobid + "_" + kw + ".html", html, Encoding.UTF8);
+
                     }
                 }
                 catch (Exception ex)
@@ -106,7 +109,9 @@ namespace UniversalTracking
             doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
 
-            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//h2[@class='Serp__item__title--2KnDi']/a");
+            //HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//h2[@class='Serp__item__title--2KnDi']/a");
+            HtmlNodeCollection hn = doc.DocumentNode.SelectNodes(".//h2[@class='Serp__title--3i6Ro']/a");
+
 
             try
             {
@@ -157,7 +162,7 @@ namespace UniversalTracking
             {
                 source = "universal",
                 url = ul,
-                limit = 100,
+                limit = 20,
                 pages = 1,
                 start_page = 1,
                 parse = false,

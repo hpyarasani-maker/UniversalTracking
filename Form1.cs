@@ -25,7 +25,7 @@ namespace UniversalTracking
         private int noResult;
         //YahooClass WOWS = new YahooClass();
         //Baidu WOWS = new Baidu();
-        Sogou WOWS = new Sogou();
+        //Sogou WOWS = new Sogou();
         //SmCnMobile_278 WOWS = new SmCnMobile_278();
         //YahooJapan WOWS = new YahooJapan();
         //YahooHK WOWS = new YahooHK();
@@ -34,7 +34,7 @@ namespace UniversalTracking
         //Sogou WOWS = new Sogou();
         //Naver WOWS = new Naver();
         //PriceSearcher WOWS = new PriceSearcher();
-
+        Rambler WOWS = new Rambler();
         //int count; 
 
         public Form1()
@@ -58,7 +58,9 @@ namespace UniversalTracking
         private void Form1_Load(object sender, EventArgs e)
         {
             //this.Text = "YahooHK_256_6_WC_70_Universal";
-            this.Text = "YahooJapanMobile_194_6_WC_50_Universal";//changes
+            //this.Text = "YahooJapanMobile_194_6_WC_50_Universal";//changes
+            this.Text = "Rambler_19_Desktop_Universal";//changes
+
 
             Thread t = new Thread(new ThreadStart (StartProcess));
             t.SetApartmentState(ApartmentState.STA);
@@ -72,9 +74,11 @@ namespace UniversalTracking
             Task<ArrayList> ta = null;
             while (true)
             {
-                string myDate = DateTime.Today.ToString("yyyy-MM-dd");             
-                string kwQry = "[GetKeywords_194_6] '" + myDate + "'";    
+                string myDate = DateTime.Today.ToString("yyyy-MM-dd");
+                //string kwQry = "[GetKeywords_194_6] '" + myDate + "'";    
                 //string kwQry = "[GetKeywords_175_D] '" + myDate + "'";//changes
+                string kwQry = "[GetKeywords_19] '" + myDate + "'";    
+
                 GetKeywords(kwQry);
                 if (lstKWs.Items.Count <= 0)
                     Environment.Exit(Environment.ExitCode);
@@ -94,11 +98,11 @@ namespace UniversalTracking
                         //ta = WOWS.getTop100SmCnMobile(seid, kw);
                         //ta = WOWS.GetTop100HaoSou360(seid, kw);
                         //ta = WOWS.GetTop100SmCnMobile(seid,kw);
-                        ta = WOWS.GetTop100Sogou(seid, kw);
+                        //ta = WOWS.GetTop100Sogou(seid, kw);
                         //ta = WOWS.GetBaidu(seid, kw);
                         //ta = WOWS.GetTop100Naver(seid, kw);
                         //ta = WOWS.GetTop100PriceSearcher(seid, kw);
-
+                        ta = WOWS.GetTop100Rambler(seid, kw);
 
                         if (ta.Result.Count >= 0)
                         {
@@ -128,11 +132,11 @@ namespace UniversalTracking
                 //lstKWs.Items.Add("175:seo multiple domains");
                 //lstKWs.Items.Add("38:ipad");
                 //lstKWs.Items.Add("340:smartview2");
-                lstKWs.Items.Add("276:backlinks checker tool");
+                //lstKWs.Items.Add("276:backlinks checker tool");
 
 
             });
-           return;
+           //return;
 
             try
             {
@@ -255,7 +259,7 @@ namespace UniversalTracking
         {
 
             //const string path = @"C:\Inetpub\wwwroot\data_256_6_GT70_Universal.xml";
-            const string path = @"C:\Inetpub\wwwroot\YahooJapanMobile_194_6_WC_50_Universal.xml";//changes
+            const string path = @"C:\Inetpub\wwwroot\Rambler_19_Desktop.xml";//changes
 
             string myDate = DateTime.Today.ToString("yyyy-MM-dd");
             ArrayList seresults = ta.Result;                     

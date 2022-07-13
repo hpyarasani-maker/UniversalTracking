@@ -75,7 +75,7 @@ namespace UniversalTracking
                             goto REPEAT;
                         }
 
-                        html += pagehtml;
+                        html = pagehtml;
                         //System.IO.File.WriteAllText(@"C:\inetpub\wwwroot\html\" + jobid + "_" + kw + ".html", html, Encoding.UTF8);
 
                     }
@@ -158,13 +158,13 @@ namespace UniversalTracking
             string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(username + ":" + password));
 
             //string[] kwd = { sp.query };
-            OxyParams op = new OxyParams()
+            RamblerOxyParams op = new RamblerOxyParams()
             {
                 source = "universal",
                 url = ul,
-                limit = 20,
-                pages = 1,
-                start_page = 1,
+                //limit = 20,
+                //pages = 1,
+                //start_page = 1,
                 parse = false,
                 user_agent_type = type
             };

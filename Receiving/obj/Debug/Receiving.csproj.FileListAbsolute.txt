@@ -1,0 +1,16 @@
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\Receiving.exe.config
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\Receiving.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\Receiving.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\HtmlAgilityPack.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\Newtonsoft.Json.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\HtmlAgilityPack.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\bin\Debug\Newtonsoft.Json.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.csprojAssemblyReference.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.Form1.resources
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.Properties.Resources.resources
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.csproj.GenerateResource.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.csproj.CoreCompileInputs.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.csproj.CopyComplete
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Receiving\obj\Debug\Receiving.pdb

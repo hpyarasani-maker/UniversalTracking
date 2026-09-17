@@ -1,0 +1,15 @@
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.csprojAssemblyReference.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.Properties.Resources.resources
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.csproj.GenerateResource.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.csproj.CoreCompileInputs.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\UniversalTracking.exe.config
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\UniversalTracking.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\UniversalTracking.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\HtmlAgilityPack.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\Newtonsoft.Json.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\HtmlAgilityPack.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\bin\Debug\Newtonsoft.Json.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.csproj.CopyComplete
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\obj\Debug\UniversalTracking.pdb

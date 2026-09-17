@@ -1,0 +1,15 @@
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\Sending.exe.config
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\Sending.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\Sending.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\HtmlAgilityPack.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\Newtonsoft.Json.dll
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\HtmlAgilityPack.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\bin\Debug\Newtonsoft.Json.xml
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.csprojAssemblyReference.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.Properties.Resources.resources
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.csproj.GenerateResource.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.csproj.CoreCompileInputs.cache
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.csproj.CopyComplete
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.exe
+C:\Users\UKUser\Source\Repos\pi-software-solutions-private-limited\UniversalTracking\Sending\obj\Debug\Sending.pdb
